@@ -1,0 +1,25 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "fcd91762-81a9-4844-bf26-3bcc79886f0e++2278",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "fcd91762-81a9-4844-bf26-3bcc79886f0e++2278" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "fcd91762-81a9-4844-bf26-3bcc79886f0e++2278" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "8F515F62-F679-4E57-840B-90B2732AED8F",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "fcd91762-81a9-4844-bf26-3bcc79886f0e++2278" : "fermon\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Motus",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Motus\/Motus.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/svn.engr.arizona.edu\/svn\/jms\/ece473-573-2016S",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "fcd91762-81a9-4844-bf26-3bcc79886f0e++2278"
+    }
+  ]
+}
