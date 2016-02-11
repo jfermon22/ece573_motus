@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6211" systemVersion="14A298i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6204"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Motus" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -15,11 +17,109 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Ew5-xM-6bN">
+                                <rect key="frame" x="20" y="106" width="560" height="444"/>
+                                <subviews>
+                                    <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10:00 pm" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="68" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ElU-4X-KVn">
+                                        <rect key="frame" x="112" y="0.0" width="337" height="99"/>
+                                        <fontDescription key="fontDescription" name="GeezaPro" family="Geeza Pro" pointSize="80"/>
+                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="cvn-SS-rIw">
+                                        <rect key="frame" x="217" y="174" width="127" height="58"/>
+                                        <subviews>
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Alarm Set" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1sh-S4-4Ai">
+                                                <rect key="frame" x="26" y="0.0" width="75" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10:00 am" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5uZ-3T-jqR">
+                                                <rect key="frame" x="0.0" y="21" width="127" height="37"/>
+                                                <fontDescription key="fontDescription" name="GeezaPro" family="Geeza Pro" pointSize="30"/>
+                                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                    </stackView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DDN-Bw-bym">
+                                        <rect key="frame" x="153" y="385" width="254" height="59"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="39"/>
+                                        <state key="normal" title="Set New Alarm"/>
+                                        <connections>
+                                            <segue destination="qdR-uO-LZ0" kind="show" identifier="CreateNewAlarmSegue" id="k1u-aV-ZdF"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="cvn-SS-rIw" firstAttribute="top" secondItem="ElU-4X-KVn" secondAttribute="bottom" constant="75" id="VZq-ZF-vlL"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Ew5-xM-6bN" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="86" id="Clk-w4-9pi"/>
+                            <constraint firstItem="Ew5-xM-6bN" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Izb-20-AbQ"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Ew5-xM-6bN" secondAttribute="bottom" constant="50" id="LS2-q6-SI1"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Ew5-xM-6bN" secondAttribute="trailing" id="Rjs-Nj-Xls"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="alarmStatusLabel" destination="1sh-S4-4Ai" id="8T6-7E-UzD"/>
+                        <outlet property="currentAlarmLabel" destination="5uZ-3T-jqR" id="E33-AX-Mc5"/>
+                        <outlet property="currentTimeLabel" destination="ElU-4X-KVn" id="wpZ-4a-rpw"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="730" y="490"/>
+        </scene>
+        <!--Alarm Set View Controller-->
+        <scene sceneID="gQB-IC-alg">
+            <objects>
+                <viewController id="qdR-uO-LZ0" customClass="AlarmSetViewController" customModule="Motus" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ncd-Z3-L6V"/>
+                        <viewControllerLayoutGuide type="bottom" id="uJ9-7l-fka"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="1Ce-x6-JgJ">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" axis="vertical" distribution="equalSpacing" alignment="center" spacing="40" translatesAutoresizingMaskIntoConstraints="NO" id="VnK-sj-9LQ">
+                                <rect key="frame" x="20" y="149" width="560" height="342"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" distribution="equalSpacing" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="V2h-10-QUu">
+                                        <rect key="frame" x="120" y="0.0" width="320" height="216"/>
+                                        <subviews>
+                                            <datePicker contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="5ah-eY-P1F">
+                                                <rect key="frame" x="0.0" y="0.0" width="320" height="216"/>
+                                                <date key="date" timeIntervalSinceReferenceDate="476859757.94704801">
+                                                    <!--2016-02-11 05:02:37 +0000-->
+                                                </date>
+                                            </datePicker>
+                                        </subviews>
+                                    </stackView>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F3k-dj-Sc7">
+                                        <rect key="frame" x="235" y="256" width="90" height="86"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="62"/>
+                                        <state key="normal" title="Set"/>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="VnK-sj-9LQ" secondAttribute="trailing" id="Zpn-zu-4lv"/>
+                            <constraint firstItem="VnK-sj-9LQ" firstAttribute="leading" secondItem="1Ce-x6-JgJ" secondAttribute="leadingMargin" id="bWq-NP-2xV"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SKj-Nr-wr6" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1425" y="490"/>
         </scene>
     </scenes>
 </document>

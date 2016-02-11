@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5242EBC41C63016C00822F12 /* AlarmSetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5242EBC31C63016C00822F12 /* AlarmSetViewController.swift */; };
 		52F96D2B1C61B10B0073D354 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F96D2A1C61B10B0073D354 /* AppDelegate.swift */; };
 		52F96D2D1C61B10B0073D354 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F96D2C1C61B10B0073D354 /* ViewController.swift */; };
 		52F96D301C61B10B0073D354 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52F96D2E1C61B10B0073D354 /* Main.storyboard */; };
@@ -27,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5242EBC31C63016C00822F12 /* AlarmSetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlarmSetViewController.swift; sourceTree = "<group>"; };
 		52F96D271C61B10B0073D354 /* Motus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Motus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52F96D2A1C61B10B0073D354 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		52F96D2C1C61B10B0073D354 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 				52F96D2A1C61B10B0073D354 /* AppDelegate.swift */,
 				52F96D2C1C61B10B0073D354 /* ViewController.swift */,
 				52F96D2E1C61B10B0073D354 /* Main.storyboard */,
+				5242EBC31C63016C00822F12 /* AlarmSetViewController.swift */,
 				52F96D341C61B10B0073D354 /* Assets.xcassets */,
 				52F96D361C61B10B0073D354 /* LaunchScreen.storyboard */,
 				52F96D391C61B10B0073D354 /* Info.plist */,
@@ -205,6 +208,7 @@
 				52F96D2D1C61B10B0073D354 /* ViewController.swift in Sources */,
 				52F96D331C61B10B0073D354 /* Motus.xcdatamodeld in Sources */,
 				52F96D2B1C61B10B0073D354 /* AppDelegate.swift in Sources */,
+				5242EBC41C63016C00822F12 /* AlarmSetViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,6 +398,7 @@
 				52F96D491C61B10C0073D354 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		52F96D4A1C61B10C0073D354 /* Build configuration list for PBXNativeTarget "MotusTests" */ = {
 			isa = XCConfigurationList;
@@ -402,6 +407,7 @@
 				52F96D4C1C61B10C0073D354 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
