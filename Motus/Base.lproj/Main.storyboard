@@ -21,23 +21,23 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Ew5-xM-6bN">
                                 <rect key="frame" x="20" y="106" width="560" height="444"/>
                                 <subviews>
-                                    <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10:00 pm" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="68" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ElU-4X-KVn">
+                                    <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10:00 pm" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="58" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ElU-4X-KVn">
                                         <rect key="frame" x="112" y="0.0" width="337" height="99"/>
                                         <fontDescription key="fontDescription" name="GeezaPro" family="Geeza Pro" pointSize="80"/>
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="cvn-SS-rIw">
-                                        <rect key="frame" x="217" y="174" width="127" height="58"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="cvn-SS-rIw">
+                                        <rect key="frame" x="243" y="222" width="75" height="21"/>
                                         <subviews>
-                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Alarm Set" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1sh-S4-4Ai">
-                                                <rect key="frame" x="26" y="0.0" width="75" height="21"/>
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Alarm Set" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1sh-S4-4Ai">
+                                                <rect key="frame" x="0.0" y="0.0" width="75" height="21"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10:00 am" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5uZ-3T-jqR">
-                                                <rect key="frame" x="0.0" y="21" width="127" height="37"/>
+                                            <label hidden="YES" opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="10:00 am" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5uZ-3T-jqR">
+                                                <rect key="frame" x="-26" y="21" width="127" height="0.0"/>
                                                 <fontDescription key="fontDescription" name="GeezaPro" family="Geeza Pro" pointSize="30"/>
                                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                 <nil key="highlightedColor"/>
@@ -53,9 +53,6 @@
                                         </connections>
                                     </button>
                                 </subviews>
-                                <constraints>
-                                    <constraint firstItem="cvn-SS-rIw" firstAttribute="top" secondItem="ElU-4X-KVn" secondAttribute="bottom" constant="75" id="VZq-ZF-vlL"/>
-                                </constraints>
                             </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -88,24 +85,27 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" axis="vertical" distribution="equalSpacing" alignment="center" spacing="40" translatesAutoresizingMaskIntoConstraints="NO" id="VnK-sj-9LQ">
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="40" translatesAutoresizingMaskIntoConstraints="NO" id="VnK-sj-9LQ">
                                 <rect key="frame" x="20" y="149" width="560" height="342"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" distribution="equalSpacing" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="V2h-10-QUu">
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="V2h-10-QUu">
                                         <rect key="frame" x="120" y="0.0" width="320" height="216"/>
                                         <subviews>
-                                            <datePicker contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="5ah-eY-P1F">
+                                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="1" useCurrentDate="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5ah-eY-P1F">
                                                 <rect key="frame" x="0.0" y="0.0" width="320" height="216"/>
-                                                <date key="date" timeIntervalSinceReferenceDate="476859757.94704801">
-                                                    <!--2016-02-11 05:02:37 +0000-->
+                                                <date key="date" timeIntervalSinceReferenceDate="476805600.94704801">
+                                                    <!--2016-02-10 14:00:00 +0000-->
                                                 </date>
                                             </datePicker>
                                         </subviews>
                                     </stackView>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F3k-dj-Sc7">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F3k-dj-Sc7">
                                         <rect key="frame" x="235" y="256" width="90" height="86"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="62"/>
                                         <state key="normal" title="Set"/>
+                                        <connections>
+                                            <segue destination="sX3-XJ-GEo" kind="unwind" unwindAction="prepareForUnwind:" id="yF2-8Y-Ezm"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                             </stackView>
@@ -114,10 +114,15 @@
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="VnK-sj-9LQ" secondAttribute="trailing" id="Zpn-zu-4lv"/>
                             <constraint firstItem="VnK-sj-9LQ" firstAttribute="leading" secondItem="1Ce-x6-JgJ" secondAttribute="leadingMargin" id="bWq-NP-2xV"/>
+                            <constraint firstItem="uJ9-7l-fka" firstAttribute="top" secondItem="VnK-sj-9LQ" secondAttribute="bottom" constant="109" id="dEG-E2-AQa"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="timePicker" destination="5ah-eY-P1F" id="bhE-H0-8Tt"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SKj-Nr-wr6" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="sX3-XJ-GEo" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1425" y="490"/>
         </scene>
