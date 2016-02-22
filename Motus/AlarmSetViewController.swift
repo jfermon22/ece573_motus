@@ -14,7 +14,6 @@ class AlarmSetViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        print("showing alarmsetviewcontroler")
     }
     
     override func viewDidLoad() {
