@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class MainViewController: UIViewController {
 
     //MARK: members
 
@@ -62,7 +62,7 @@ class ViewController: UIViewController {
     }
     
     func updateTime(){
-        currentTimeLabel.text = formatTimeForDisplay(NSDate())
+        currentTimeLabel.text = TimeFunctions.formatTimeForDisplay(NSDate())
         
         if alarmShouldTrigger() {
             alarmIsSet = false
@@ -75,19 +75,14 @@ class ViewController: UIViewController {
         return ( alarmIsSet && currentTimeLabel.text == currentAlarmLabel!.text )
     }
     
-    func formatTimeForDisplay(date:NSDate) -> String {
-        let formatter = NSDateFormatter()
-        formatter.locale = NSLocale.currentLocale()
-        formatter.timeStyle = NSDateFormatterStyle.ShortStyle
-        return formatter.stringFromDate(date)
-    }
+ 
     
     @IBAction func prepareForUnwind(segue:UIStoryboardSegue) {
         if let vc = segue.sourceViewController as? AlarmSetViewController {
             
             alarmSetTime = vc.timePicker.date
             
-            currentAlarmLabel.text = formatTimeForDisplay( alarmSetTime! );
+            currentAlarmLabel.text = TimeFunctions.formatTimeForDisplay( alarmSetTime! );
             
             alarmIsSet=true;
         }

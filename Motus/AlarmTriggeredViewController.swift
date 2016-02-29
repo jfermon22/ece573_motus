@@ -31,6 +31,14 @@ class AlarmTriggeredViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        updateTime()
+        // Do any additional setup after loading the view, typically from a nib.
+        timer = NSTimer.scheduledTimerWithTimeInterval(1.0,
+            target: self,
+            selector: Selector("updateTime"),
+            userInfo: nil,
+            repeats: true)
+
         
         // Do any additional setup after loading the view.
     }
@@ -39,4 +47,9 @@ class AlarmTriggeredViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    func updateTime(){
+        currentTimeLabel.text = TimeFunctions.formatTimeForDisplay(NSDate())
+    }
+    
 }

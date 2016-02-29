@@ -24,13 +24,18 @@ class MotusTests: XCTestCase {
     func testExample() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let audioPlayer = SoundPlayer(sound:"Apex")
+        XCTAssertNil(audioPlayer)
+        audioPlayer.play();
+        XCTAssertTrue(audioPlayer.IsPlaying())
+        sleep(10);
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock {
-            // Put the code you want to measure the time of here.
-        }
-    }
+   // func testPerformanceExample() {
+   //     // This is an example of a performance test case.
+   //     self.measureBlock {
+   //         // Put the code you want to measure the time of here.
+   //     }
+   // }
     
 }

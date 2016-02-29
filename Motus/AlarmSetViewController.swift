@@ -12,13 +12,14 @@ class AlarmSetViewController: UIViewController {
     
     @IBOutlet var timePicker: UIDatePicker!
     
+    @IBOutlet var soundButton: UIButton!
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
     }
 
