@@ -11,7 +11,9 @@ import UIKit
 class SoundChooserViewController: UITableViewController {
     
     var sounds:[String]?
-    
+    var selectedSound:String!
+    var resourcePath:String!
+    var currentlySelected:NSIndexPath!
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
@@ -19,32 +21,62 @@ class SoundChooserViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        resourcePath = NSBundle.mainBundle().resourcePath
         populateArray()
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        //print("cell for row at index called: \(indexPath.row) section: \(indexPath.section)")
         let cell = tableView.dequeueReusableCellWithIdentifier("basic", forIndexPath: indexPath)
         let name = sounds?[indexPath.row];
         cell.textLabel!.text = name;
+        if selectedSound == name {
+            cell.accessoryType = UITableViewCellAccessoryType.Checkmark
+            currentlySelected = indexPath;
+        }
+        else
+        {
+            cell.accessoryType = UITableViewCellAccessoryType.None;
+        }
         return cell
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func setViewSelectedSound(newSound:String){
+        selectedSound = newSound
+    }
+    
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    {
+        //print("num of rows called: \(sounds!.count) in sectrion: \(section)")
         return sounds!.count;
     }
     
     func populateArray() {
+        //print("populate array called")
         let fileManager = NSFileManager.defaultManager()
-        let resourcepath = NSBundle.mainBundle().resourcePath
-        sounds = try! fileManager.contentsOfDirectoryAtPath(resourcepath! + "/Sounds")
-        
-        for (index, sound) in sounds!.enumerate() {
-           sounds![index] = sound.stringByReplacingOccurrencesOfString(".m4r", withString: "")
+        let tempArray = try! fileManager.contentsOfDirectoryAtPath(resourcePath! + "/Sounds")
+        sounds = [String()]
+        for curSound in tempArray {
+           sounds?.append(curSound.stringByReplacingOccurrencesOfString(".m4r", withString: ""))
         }
+        //sounds?.append("Random")
+        sounds = sounds!.sort()
     }
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // Return the number of sections.
-        return 1
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let previouslySelectedCell = tableView.cellForRowAtIndexPath(currentlySelected)
+        let newSelectedCell = tableView.cellForRowAtIndexPath(indexPath)
+        
+        if newSelectedCell != previouslySelectedCell {
+            previouslySelectedCell?.accessoryType = UITableViewCellAccessoryType.None
+            newSelectedCell?.accessoryType = UITableViewCellAccessoryType.Checkmark
+            selectedSound = newSelectedCell?.textLabel?.text
+            currentlySelected = indexPath
+        }
+        
+        let soundPlayer = SoundPlayer(sound: resourcePath + "/Sounds/" + selectedSound + ".m4r")
+        soundPlayer.setNumberOfLoops(0)
+        soundPlayer.play()
     }
+
 }

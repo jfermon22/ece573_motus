@@ -15,11 +15,16 @@ class SoundPlayer {
     var soundPath:NSURL?
     
     init (sound: String){
-        soundPath = NSURL(fileURLWithPath: String( "\(NSBundle.mainBundle().pathForResource(sound, ofType: "m4r")!)"))
+        print("soundplayer path: " + sound)
+        soundPath = NSURL(fileURLWithPath: sound)
         try! audioPlayer = AVAudioPlayer(contentsOfURL: soundPath!, fileTypeHint: nil)
         audioPlayer!.numberOfLoops = -1
         audioPlayer!.prepareToPlay()
         
+    }
+    
+    func setNumberOfLoops(number:Int){
+       audioPlayer!.numberOfLoops = number
     }
     
     // Trigger the sound effect when the player grabs the coin

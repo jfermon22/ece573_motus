@@ -11,8 +11,8 @@ import UIKit
 class AlarmSetViewController: UIViewController {
     
     @IBOutlet var timePicker: UIDatePicker!
-    
     @IBOutlet var soundButton: UIButton!
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
     }
@@ -27,6 +27,16 @@ class AlarmSetViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "SelectSoundSegue"
+        {
+            if let soundVC = segue.destinationViewController as? SoundChooserViewController {
+                soundVC.setViewSelectedSound(soundButton.titleLabel!.text!)
+            }
+        }
+    }
+
 
 
     /*

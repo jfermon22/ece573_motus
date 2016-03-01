@@ -195,7 +195,7 @@
                                                 <rect key="frame" x="114" y="0.0" width="57" height="30"/>
                                                 <state key="normal" title="Random"/>
                                                 <connections>
-                                                    <segue destination="WXb-Xz-NAx" kind="show" id="Czd-Q7-h4L"/>
+                                                    <segue destination="WXb-Xz-NAx" kind="show" identifier="SelectSoundSegue" id="Czd-Q7-h4L"/>
                                                 </connections>
                                             </button>
                                         </subviews>
