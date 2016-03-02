@@ -36,6 +36,13 @@ class AlarmSetViewController: UIViewController {
             }
         }
     }
+    
+    @IBAction func prepareForUnwind(segue:UIStoryboardSegue) {
+        if let soundVC = segue.sourceViewController as? SoundChooserViewController {
+            soundButton.titleLabel!.text = soundVC.selectedSound
+        }
+        
+    }
 
 
 

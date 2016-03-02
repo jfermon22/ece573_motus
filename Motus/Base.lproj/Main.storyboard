@@ -195,7 +195,7 @@
                                                 <rect key="frame" x="114" y="0.0" width="57" height="30"/>
                                                 <state key="normal" title="Random"/>
                                                 <connections>
-                                                    <segue destination="WXb-Xz-NAx" kind="show" identifier="SelectSoundSegue" id="Czd-Q7-h4L"/>
+                                                    <segue destination="r6O-fk-4PF" kind="show" identifier="SelectSoundSegue" id="Czd-Q7-h4L"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -228,7 +228,7 @@
             </objects>
             <point key="canvasLocation" x="1425" y="490"/>
         </scene>
-        <!--Sound Chooser View Controller-->
+        <!--Choose Sound-->
         <scene sceneID="KZA-bH-hXF">
             <objects>
                 <tableViewController id="WXb-Xz-NAx" customClass="SoundChooserViewController" customModule="Motus" customModuleProvider="target" sceneMemberID="viewController">
@@ -238,7 +238,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="checkmark" indentationWidth="10" reuseIdentifier="basic" textLabel="9wo-bG-x0n" style="IBUITableViewCellStyleDefault" id="ZVt-BP-ffK">
-                                <rect key="frame" x="0.0" y="28" width="600" height="44"/>
+                                <rect key="frame" x="0.0" y="92" width="600" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ZVt-BP-ffK" id="vnn-GJ-ubZ">
                                     <rect key="frame" x="0.0" y="0.0" width="561" height="43"/>
@@ -260,8 +260,39 @@
                             <outlet property="delegate" destination="WXb-Xz-NAx" id="HCL-Is-o47"/>
                         </connections>
                     </tableView>
+                    <toolbarItems>
+                        <barButtonItem title="Item" id="ugq-ev-7j0"/>
+                    </toolbarItems>
+                    <navigationItem key="navigationItem" title="Choose Sound" id="ELl-TR-g5e">
+                        <barButtonItem key="backBarButtonItem" title="Back" id="wE0-8H-G4A"/>
+                        <barButtonItem key="leftBarButtonItem" title="Back" id="Dti-UO-siv">
+                            <connections>
+                                <segue destination="sX3-XJ-GEo" kind="unwind" unwindAction="prepareForUnwind:" id="GjI-fU-wpH"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sfD-aR-EO1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2887" y="490"/>
+        </scene>
+        <!--Choose Sound-->
+        <scene sceneID="k9p-D0-8fC">
+            <objects>
+                <navigationController title="Choose Sound" automaticallyAdjustsScrollViewInsets="NO" id="r6O-fk-4PF" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="d7g-pS-FLo">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="WXb-Xz-NAx" kind="relationship" relationship="rootViewController" id="5vg-az-s6E"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="FUP-m9-lCw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2075" y="490"/>
         </scene>
