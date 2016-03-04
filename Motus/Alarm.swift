@@ -9,13 +9,35 @@
 import Foundation
 
 class Alarm {
-    var _time:NSDate?
-    var _sound:String?
-    var _task:Task?
-    init (time:NSDate, sound:String, task:Task){
-        _time = time
-        _sound = sound
-        _task = task
+    var time:NSDate!
+    var sound:String!
+    var soundPath:String!
+    var task:Task!
+    var isSet:Bool
+    var soundPlayer:SoundPlayer!
+    var timeToCompleteTask:NSInteger!
+    init (time:NSDate, sound:String, task:Task, isSet:Bool){
+        self.time = time
+        self.sound = sound
+        self.task = task
+        self.isSet = isSet;
+        self.soundPath = NSBundle.mainBundle().resourcePath! + "/Sounds/"
+        self.timeToCompleteTask = 60
     }
     
+    func testSound(sound: String) {
+        soundPlayer = SoundPlayer(sound: soundPath + sound )
+        soundPlayer.setNumberOfLoops(0)
+        soundPlayer.play()
+    }
+    
+    func triggerAlarm(){
+        soundPlayer = SoundPlayer(sound: soundPath + sound )
+        soundPlayer.setNumberOfLoops(-1)
+        soundPlayer.play()
+    }
+    
+    func stopAlarm(){
+        soundPlayer.stop()
+    }
 }

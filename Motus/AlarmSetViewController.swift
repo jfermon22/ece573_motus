@@ -12,6 +12,7 @@ class AlarmSetViewController: UIViewController {
     
     @IBOutlet var timePicker: UIDatePicker!
     @IBOutlet var soundButton: UIButton!
+    var alarm:Alarm!
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
@@ -31,15 +32,18 @@ class AlarmSetViewController: UIViewController {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "SelectSoundSegue"
         {
-            if let soundVC = segue.destinationViewController as? SoundChooserViewController {
-                soundVC.setViewSelectedSound(soundButton.titleLabel!.text!)
+            if let navController = segue.destinationViewController as? UINavigationController {
+                if let soundVC = navController.viewControllers[0] as? SoundChooserViewController{
+                    soundVC.alarm = alarm
+                }
             }
         }
     }
     
     @IBAction func prepareForUnwind(segue:UIStoryboardSegue) {
         if let soundVC = segue.sourceViewController as? SoundChooserViewController {
-            soundButton.titleLabel!.text = soundVC.selectedSound
+            alarm = soundVC.alarm
+            soundButton.titleLabel!.text = alarm.sound
         }
         
     }

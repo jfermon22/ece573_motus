@@ -11,33 +11,38 @@ import AVFoundation
 
 class SoundPlayer {
     
-    var audioPlayer:AVAudioPlayer?
+    var audioPlayer:AVAudioPlayer!
     var soundPath:NSURL?
     
     init (sound: String){
-        print("soundplayer path: " + sound)
-        soundPath = NSURL(fileURLWithPath: sound)
+        var thisSound = ""
+        if !sound.hasSuffix(".m4r"){
+            thisSound = sound + ".m4r"
+        } else {
+            thisSound = sound
+        }
+        print("playing sound: " + thisSound)
+        soundPath = NSURL(fileURLWithPath: thisSound)
         try! audioPlayer = AVAudioPlayer(contentsOfURL: soundPath!, fileTypeHint: nil)
-        audioPlayer!.numberOfLoops = -1
-        audioPlayer!.prepareToPlay()
+        audioPlayer.numberOfLoops = -1
+        audioPlayer.prepareToPlay()
         
     }
     
     func setNumberOfLoops(number:Int){
-       audioPlayer!.numberOfLoops = number
+       audioPlayer.numberOfLoops = number
     }
     
-    // Trigger the sound effect when the player grabs the coin
     func play() {
-        audioPlayer!.play()
+        audioPlayer.play()
     }
     
     func stop() {
-        audioPlayer!.stop()
+        audioPlayer.stop()
     }
     
     func IsPlaying() -> Bool {
-        return audioPlayer!.playing
+        return audioPlayer.playing
     }
 
     
