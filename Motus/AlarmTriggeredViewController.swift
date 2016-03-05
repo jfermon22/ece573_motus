@@ -28,6 +28,10 @@ class AlarmTriggeredViewController: UIViewController {
     var countDownActive:Bool!
     var state:AlarmTriggeredStates!
     
+    var motionDetector:MotionDetector!
+    var locationDetector:LocationDetector!
+    var gestureDetector:GestureDetector!
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         runStateMachine()
