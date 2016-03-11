@@ -67,6 +67,7 @@
                         <outlet property="alarmStatusLabel" destination="1sh-S4-4Ai" id="8T6-7E-UzD"/>
                         <outlet property="currentAlarmLabel" destination="5uZ-3T-jqR" id="E33-AX-Mc5"/>
                         <outlet property="currentTimeLabel" destination="ElU-4X-KVn" id="wpZ-4a-rpw"/>
+                        <outlet property="newAlarmButton" destination="DDN-Bw-bym" id="gp8-AL-Lai"/>
                         <segue destination="LsS-fs-Tss" kind="show" identifier="AlarmTriggered" id="eGe-4f-E64"/>
                     </connections>
                 </viewController>
@@ -159,7 +160,7 @@
         <!--Alarm Set View Controller-->
         <scene sceneID="gQB-IC-alg">
             <objects>
-                <viewController id="qdR-uO-LZ0" customClass="AlarmSetViewController" customModule="Motus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AlarmSetViewController" id="qdR-uO-LZ0" customClass="AlarmSetViewController" customModule="Motus" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="ncd-Z3-L6V"/>
                         <viewControllerLayoutGuide type="bottom" id="uJ9-7l-fka"/>
@@ -205,7 +206,7 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="62"/>
                                         <state key="normal" title="Set"/>
                                         <connections>
-                                            <segue destination="sX3-XJ-GEo" kind="unwind" unwindAction="prepareForUnwind:" id="yF2-8Y-Ezm"/>
+                                            <segue destination="sX3-XJ-GEo" kind="unwind" identifier="AsPrepareForUnwind" unwindAction="prepareForUnwind:" id="yF2-8Y-Ezm"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -219,6 +220,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="alarmConfirmButton" destination="F3k-dj-Sc7" id="33V-7q-mEn"/>
                         <outlet property="soundButton" destination="nAu-qC-naF" id="4yJ-yb-lch"/>
                         <outlet property="timePicker" destination="5ah-eY-P1F" id="bhE-H0-8Tt"/>
                     </connections>

@@ -13,6 +13,10 @@ class AlarmSetViewController: UIViewController {
     @IBOutlet var timePicker: UIDatePicker!
     @IBOutlet var soundButton: UIButton!
     var alarm:Alarm!
+    @IBOutlet var alarmConfirmButton: UIButton!
+    var lastCalledSegue:String?
+
+    
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
@@ -41,6 +45,7 @@ class AlarmSetViewController: UIViewController {
     }
     
     @IBAction func prepareForUnwind(segue:UIStoryboardSegue) {
+        lastCalledSegue = segue.identifier
         if let soundVC = segue.sourceViewController as? SoundChooserViewController {
             alarm = soundVC.alarm
             soundButton.titleLabel!.text = alarm.sound

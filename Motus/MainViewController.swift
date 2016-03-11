@@ -15,6 +15,9 @@ class MainViewController: UIViewController {
     @IBOutlet var currentTimeLabel: UILabel!
     @IBOutlet var alarmStatusLabel: UILabel!
     @IBOutlet var currentAlarmLabel: UILabel!
+    @IBOutlet var newAlarmButton: UIButton!
+    var lastCalledSegue:String?
+    var lastSegue:UIStoryboardSegue?
     var alarm:Alarm!
     
     var timer:NSTimer!
@@ -62,6 +65,8 @@ class MainViewController: UIViewController {
     
     //MARK: Segue Methods
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        lastCalledSegue = segue.identifier
+        lastSegue = segue
         if segue.identifier == "CreateNewAlarmSegue"
         {
             if let asvc = segue.destinationViewController as? AlarmSetViewController{
@@ -78,6 +83,7 @@ class MainViewController: UIViewController {
     }
     
     @IBAction func prepareForUnwind(segue:UIStoryboardSegue) {
+        lastCalledSegue = segue.identifier
         if let vc = segue.sourceViewController as? AlarmSetViewController {
             alarm = vc.alarm
             alarm.time = vc.timePicker.date
