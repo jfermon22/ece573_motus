@@ -51,6 +51,10 @@ class AlarmSetViewController: UIViewController {
             soundButton.titleLabel!.text = alarm.sound
         }
         
+        if alarm.soundPlayer.IsPlaying() {
+            alarm.soundPlayer.stop()
+        }
+        
     }
 
 
