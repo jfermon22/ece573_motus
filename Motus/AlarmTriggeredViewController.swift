@@ -17,13 +17,13 @@ enum AlarmTriggeredStates {
 
 
 class AlarmTriggeredViewController: UIViewController {
-
+    
     @IBOutlet var currentTimeLabel: UILabel!
     @IBOutlet var currentTaskLabel: UILabel!
     @IBOutlet var timeToCompleteTaskLabel: UILabel!
     
     var alarm:Alarm!
-    var timeToCompleteTask:NSInteger!
+    var timeToCompleteTask:UInt64!
     var timer:NSTimer!
     var countDownActive:Bool!
     var state:AlarmTriggeredStates!
@@ -48,6 +48,13 @@ class AlarmTriggeredViewController: UIViewController {
             userInfo: nil,
             repeats: true)
         // Do any additional setup after loading the view.
+        if locationDetector == nil {
+            locationDetector = LocationDetector()
+        }
+        
+        if motionDetector == nil {
+            motionDetector = MotionDetector()
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -82,19 +89,19 @@ class AlarmTriggeredViewController: UIViewController {
     }
     
     func waitForMotion(){
-        var motionDetected = false
         
-        if !motionDetected {
-            print("waiting for motion")
-            sleep(1)
-            motionDetected = true
-        }
+        motionDetector!.start()
         
-        if motionDetected {
-            state = .WAITING_FOR_TASK_COMPLETE
-            alarm.stopAlarm()
-            setTaskLabel()
-        }
+        print("waiting for motion")
+        motionDetector!.waitTilDeviceMove()
+        
+        
+        print("device moved")
+        motionDetector!.stop()
+        
+        state = .WAITING_FOR_TASK_COMPLETE
+        alarm.stopAlarm()
+        setTaskLabel()
         
     }
     
@@ -103,6 +110,20 @@ class AlarmTriggeredViewController: UIViewController {
         
         if !taskIsComplete && timeToCompleteTask != 0 {
             print("waiting for task complete")
+            switch alarm.task! {
+            case .LOCATION:
+                locationDetector!.start()
+                locationDetector!.waitTilDeviceMove(20,timeout: timeToCompleteTask)
+                break
+            case .MOTION:
+                motionDetector!.start()
+                motionDetector!.waitTilDeviceMove()
+                break
+            case .GESTURE:
+                break
+                
+            }
+            
             sleep(1)
         }
         

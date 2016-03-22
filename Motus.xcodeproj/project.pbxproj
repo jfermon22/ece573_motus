@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5201161F1C97D21F00CF8F5D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5201161E1C97D21F00CF8F5D /* LocationManager.swift */; };
+		520116211C9FB12E00CF8F5D /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520116201C9FB12E00CF8F5D /* MotionManager.swift */; };
 		5242EBC41C63016C00822F12 /* AlarmSetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5242EBC31C63016C00822F12 /* AlarmSetViewController.swift */; };
 		5253074A1C83B1090018C296 /* TimeFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525307491C83B1090018C296 /* TimeFunctions.swift */; };
 		5253074C1C83B31E0018C296 /* MotionDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5253074B1C83B31E0018C296 /* MotionDetector.swift */; };
@@ -38,6 +40,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5201161E1C97D21F00CF8F5D /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		520116201C9FB12E00CF8F5D /* MotionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
 		5242EBC31C63016C00822F12 /* AlarmSetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlarmSetViewController.swift; sourceTree = "<group>"; };
 		525307491C83B1090018C296 /* TimeFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeFunctions.swift; sourceTree = "<group>"; };
 		5253074B1C83B31E0018C296 /* MotionDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotionDetector.swift; sourceTree = "<group>"; };
@@ -110,8 +114,10 @@
 				5253078F1C83CA1E0018C296 /* SoundChooserViewController.swift */,
 				5253074D1C83B3350018C296 /* SoundPlayer.swift */,
 				52F96D2E1C61B10B0073D354 /* Main.storyboard */,
-				5253074B1C83B31E0018C296 /* MotionDetector.swift */,
 				5253074F1C83B3530018C296 /* LocationDetector.swift */,
+				5201161E1C97D21F00CF8F5D /* LocationManager.swift */,
+				5253074B1C83B31E0018C296 /* MotionDetector.swift */,
+				520116201C9FB12E00CF8F5D /* MotionManager.swift */,
 				525307511C83B3830018C296 /* GestureDetector.swift */,
 				525307491C83B1090018C296 /* TimeFunctions.swift */,
 				525307911C8959F30018C296 /* Task.swift */,
@@ -237,6 +243,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				525307901C83CA1E0018C296 /* SoundChooserViewController.swift in Sources */,
+				520116211C9FB12E00CF8F5D /* MotionManager.swift in Sources */,
 				52F96D2D1C61B10B0073D354 /* MainViewController.swift in Sources */,
 				52F96D331C61B10B0073D354 /* Motus.xcdatamodeld in Sources */,
 				5253074E1C83B3350018C296 /* SoundPlayer.swift in Sources */,
@@ -246,6 +253,7 @@
 				52F96D2B1C61B10B0073D354 /* AppDelegate.swift in Sources */,
 				525307921C8959F30018C296 /* Task.swift in Sources */,
 				52CFE4871C7A21860024E8C5 /* AlarmTriggeredViewController.swift in Sources */,
+				5201161F1C97D21F00CF8F5D /* LocationManager.swift in Sources */,
 				5242EBC41C63016C00822F12 /* AlarmSetViewController.swift in Sources */,
 				5253074C1C83B31E0018C296 /* MotionDetector.swift in Sources */,
 				5253078C1C83C3910018C296 /* Alarm.swift in Sources */,

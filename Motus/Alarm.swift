@@ -15,7 +15,7 @@ class Alarm {
     var task:Task!
     var isSet:Bool
     var soundPlayer:SoundPlayer!
-    var timeToCompleteTask:NSInteger!
+    var timeToCompleteTask:UInt64!
     init (time:NSDate, sound:String, task:Task, isSet:Bool){
         self.time = time
         self.sound = sound
