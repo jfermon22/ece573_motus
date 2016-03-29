@@ -32,22 +32,10 @@ class AlarmTriggeredViewController: UIViewController {
     var locationDetector:LocationDetector!
     var gestureDetector:GestureDetector!
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        runStateMachine()
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         timeToCompleteTask = alarm.timeToCompleteTask
-        state = .TRIGGER_ALARM
-        updateTime()
-        timer = NSTimer.scheduledTimerWithTimeInterval(1.0,
-            target: self,
-            selector: Selector("updateTime"),
-            userInfo: nil,
-            repeats: true)
-        // Do any additional setup after loading the view.
+        state = .TRIGGER_ALARM        // Do any additional setup after loading the view.
         if locationDetector == nil {
             locationDetector = LocationDetector()
         }
@@ -55,6 +43,17 @@ class AlarmTriggeredViewController: UIViewController {
         if motionDetector == nil {
             motionDetector = MotionDetector()
         }
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        updateTime()
+        timer = NSTimer.scheduledTimerWithTimeInterval(1.0,
+                                                       target: self,
+                                                       selector: #selector(AlarmTriggeredViewController.updateTime),
+                                                       userInfo: nil,
+                                                       repeats: true)
+         runStateMachine()
     }
     
     override func didReceiveMemoryWarning() {
@@ -90,11 +89,13 @@ class AlarmTriggeredViewController: UIViewController {
     
     func waitForMotion(){
         
-        motionDetector!.start()
+        if !motionDetector!.start() {
+            print("waitForMotion: failed to start motion updates")
+        }
         
         print("waiting for motion")
-        motionDetector!.waitTilDeviceMove()
         
+        motionDetector!.waitTilDeviceMove()
         
         print("device moved")
         motionDetector!.stop()
@@ -108,28 +109,26 @@ class AlarmTriggeredViewController: UIViewController {
     func waitForTaskComplete(){
         var taskIsComplete = false
         
-        if !taskIsComplete && timeToCompleteTask != 0 {
-            print("waiting for task complete")
-            switch alarm.task! {
-            case .LOCATION:
-                locationDetector!.start()
-                locationDetector!.waitTilDeviceMove(20,timeout: timeToCompleteTask)
-                break
-            case .MOTION:
-                motionDetector!.start()
-                motionDetector!.waitTilDeviceMove()
-                break
-            case .GESTURE:
-                break
-                
-            }
+        print("waiting for task complete")
+        switch alarm.task! {
+        case .LOCATION:
+            locationDetector!.start()
+            locationDetector!.waitTilDeviceMove(20,timeout: timeToCompleteTask)
+            taskIsComplete = locationDetector!.deviceMovedMinimum
+            break
+        case .MOTION:
+            motionDetector!.start()
+            motionDetector!.waitTilDeviceMove()
+            taskIsComplete = motionDetector!.deviceMoved
+            break
+        case .GESTURE:
+            break
             
-            sleep(1)
         }
         
         if taskIsComplete {
             state = .TASK_COMPLETE
-        } else if timeToCompleteTask == 0 {
+        } else  {
             state = .TRIGGER_ALARM
         }
     }

@@ -13,46 +13,57 @@ protocol MotionManagerDelegate {
     func gotAccelUpdate(orientation:CMAccelerometerData)
 }
 
-class MotionManager: NSObject {
-    var cmmotionmanager:CMMotionManager?
+class MotionManager {
+    static let sharedInstance = MotionManager()
+    let cmmotionmanager = CMMotionManager()
     var currentOrientation:CMAccelerometerData?
     var initialOrientation:CMAccelerometerData?
     var delegate:MotionManagerDelegate?
     
-    convenience init(updateInterval:NSTimeInterval){
-        self.init()
-        cmmotionmanager?.accelerometerUpdateInterval = updateInterval
-    }
-    
-    override init() {
-        super.init()
-        cmmotionmanager = CMMotionManager()
-        cmmotionmanager?.accelerometerUpdateInterval = NSTimeInterval(0.1)
+    private init() {
+        cmmotionmanager.accelerometerUpdateInterval = NSTimeInterval(1)
     }
     
     deinit {
-        if cmmotionmanager!.accelerometerActive {
+        if cmmotionmanager.accelerometerActive {
             stopMotionUpdates()
         }
-        cmmotionmanager = nil
         currentOrientation = nil
         delegate = nil
     }
     
-    func startMotionUpdates() {
-        if cmmotionmanager!.accelerometerAvailable  {
+    func setUpdateInterval(updateInterval:NSTimeInterval){
+        cmmotionmanager.accelerometerUpdateInterval = updateInterval
+    }
+    
+    func startMotionUpdates() -> Bool {
+        if cmmotionmanager.accelerometerAvailable  {
             let handler:CMAccelerometerHandler = {
                 (data: CMAccelerometerData?, error: NSError?) -> Void in
                 self.currentOrientation = data!
                 self.delegate!.gotAccelUpdate(self.currentOrientation!)
             }
-            cmmotionmanager?.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue()!, withHandler: handler)
+            print("startMotionUpdates - Started motion updates")
+            cmmotionmanager.accelerometerUpdateInterval = NSTimeInterval(1)
+            cmmotionmanager.startAccelerometerUpdatesToQueue(NSOperationQueue(), withHandler: handler)
         }
+        else {
+            print("startMotionUpdates - Accelorometer unavailable")
+        }
+        
+        return cmmotionmanager.accelerometerActive
+    }
+
+    func getMotionUpdate() -> CMAccelerometerData {
+        if (cmmotionmanager.accelerometerData == nil) {
+            return CMAccelerometerData()
+        }
+        return cmmotionmanager.accelerometerData!
     }
     
     
     func stopMotionUpdates() {
-        cmmotionmanager?.stopAccelerometerUpdates()
+        cmmotionmanager.stopAccelerometerUpdates()
     }
     
 }

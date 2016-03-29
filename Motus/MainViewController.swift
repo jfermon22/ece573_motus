@@ -24,17 +24,24 @@ class MainViewController: UIViewController {
     //MARK: Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        alarm = Alarm(time: NSDate(), sound: "Random", task: Task.LOCATION, isSet:false)
-        updateTime()
-                // Do any additional setup after loading the view, typically from a nib.
+        if alarm == nil {
+            alarm = Alarm(time: NSDate(), sound: "Apex", task: Task.LOCATION, isSet:false)
+        }
+        
         timer = NSTimer.scheduledTimerWithTimeInterval(1.0,
             target: self,
-            selector: Selector("updateTime"),
+            selector: #selector(MainViewController.updateTime),
             userInfo: nil,
             repeats: true)
+        updateTime(true)
+    }
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        updateTime(true)
     }
     
     override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
         alarmStatusLabel.enabled = alarm.isSet
         currentAlarmLabel.hidden = !alarm.isSet
         if alarm.isSet {
@@ -49,13 +56,13 @@ class MainViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func updateTime(){
+    func updateTime(skipTriggerCheck:Bool = false){
         currentTimeLabel.text = TimeFunctions.formatTimeForDisplay(NSDate())
         
-        if alarmShouldTrigger() {
+        if alarmShouldTrigger() && !skipTriggerCheck {
             alarm.isSet = false
             print("alarm TRIGGERED at \(alarm.time!)")
-            performSegueWithIdentifier("AlarmTriggered", sender: nil)
+            performSegueWithIdentifier("AlarmTriggered", sender: self)
         }
     }
     
@@ -90,7 +97,7 @@ class MainViewController: UIViewController {
             currentAlarmLabel.text = TimeFunctions.formatTimeForDisplay( alarm.time! );
             alarm.isSet = true;
         }
-        if let vc = segue.sourceViewController as? AlarmTriggeredViewController {
+        else if let vc = segue.sourceViewController as? AlarmTriggeredViewController {
             alarm = vc.alarm
             alarm.isSet = false;
         }

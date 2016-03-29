@@ -21,7 +21,7 @@ class SoundPlayer {
         } else {
             thisSound = sound
         }
-        print("playing sound: " + thisSound)
+        //print("playing sound: " + thisSound)
         soundPath = NSURL(fileURLWithPath: thisSound)
         try! audioPlayer = AVAudioPlayer(contentsOfURL: soundPath!, fileTypeHint: nil)
         audioPlayer.numberOfLoops = -1
