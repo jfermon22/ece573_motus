@@ -17,14 +17,9 @@ class AlarmSetViewController: UIViewController {
     var lastCalledSegue:String?
 
     
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        soundButton.setTitle(alarm.sound, forState: .Normal)
         // Do any additional setup after loading the view.
     }
 
@@ -48,7 +43,7 @@ class AlarmSetViewController: UIViewController {
         lastCalledSegue = segue.identifier
         if let soundVC = segue.sourceViewController as? SoundChooserViewController {
             alarm = soundVC.alarm
-            soundButton.titleLabel!.text = alarm.sound
+            soundButton.setTitle(alarm.sound, forState: .Normal)
         }
         
         if alarm.soundPlayer.IsPlaying() {

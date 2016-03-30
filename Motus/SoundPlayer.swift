@@ -9,36 +9,56 @@
 import Foundation
 import AVFoundation
 
+enum SoundPlayerError: ErrorType {
+    case URL_NIL
+}
+
 class SoundPlayer {
-    
-    var audioPlayer:AVAudioPlayer!
+    var audioPlayer = AVAudioPlayer()
     var soundPath:NSURL?
+ 
+    init (){
+        
+    }
     
-    init (sound: String){
+    convenience init (sound: String){
+        self.init()
+        setSound(sound)
+    }
+    
+    func setSound (sound: String){
         var thisSound = ""
         if !sound.hasSuffix(".m4r"){
             thisSound = sound + ".m4r"
         } else {
             thisSound = sound
         }
-        //print("playing sound: " + thisSound)
         soundPath = NSURL(fileURLWithPath: thisSound)
-        try! audioPlayer = AVAudioPlayer(contentsOfURL: soundPath!, fileTypeHint: nil)
+        try! audioPlayer = AVAudioPlayer(contentsOfURL: soundPath!)
         audioPlayer.numberOfLoops = -1
         audioPlayer.prepareToPlay()
-        
     }
     
     func setNumberOfLoops(number:Int){
        audioPlayer.numberOfLoops = number
     }
     
-    func play() {
-        audioPlayer.play()
+    func getNumberOfLoops() -> Int {
+        return audioPlayer.numberOfLoops
+    }
+    
+    func play() throws {
+        if audioPlayer.url != nil {
+            audioPlayer.play()
+        } else {
+            throw SoundPlayerError.URL_NIL
+        }
     }
     
     func stop() {
-        audioPlayer.stop()
+        if audioPlayer.playing {
+            audioPlayer.stop()
+        }
     }
     
     func IsPlaying() -> Bool {

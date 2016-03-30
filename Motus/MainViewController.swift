@@ -19,6 +19,7 @@ class MainViewController: UIViewController {
     var lastCalledSegue:String?
     var lastSegue:UIStoryboardSegue?
     var alarm:Alarm!
+    var lastReadTime:String?
     
     var timer:NSTimer!
     //MARK: Methods
@@ -37,6 +38,7 @@ class MainViewController: UIViewController {
     }
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        lastReadTime = nil
         updateTime(true)
     }
     
@@ -57,17 +59,26 @@ class MainViewController: UIViewController {
     }
     
     func updateTime(skipTriggerCheck:Bool = false){
+        //set clock to current time
         currentTimeLabel.text = TimeFunctions.formatTimeForDisplay(NSDate())
-        
+      
         if alarmShouldTrigger() && !skipTriggerCheck {
             alarm.isSet = false
             print("alarm TRIGGERED at \(alarm.time!)")
             performSegueWithIdentifier("AlarmTriggered", sender: self)
         }
+        
+        lastReadTime = currentTimeLabel.text
     }
     
     func alarmShouldTrigger() -> Bool {
-        return ( alarm.isSet && currentTimeLabel.text == currentAlarmLabel!.text )
+        if let _ = lastReadTime {
+        return ( alarm.isSet &&
+            currentTimeLabel.text == currentAlarmLabel!.text &&
+            currentTimeLabel.text != lastReadTime )
+        } else {
+           return false
+        }
     }
     
     //MARK: Segue Methods

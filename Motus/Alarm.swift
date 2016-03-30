@@ -22,19 +22,20 @@ class Alarm {
         self.task = task
         self.isSet = isSet;
         self.soundPath = NSBundle.mainBundle().resourcePath! + "/Sounds/"
+        soundPlayer = SoundPlayer(sound: soundPath + sound)
         self.timeToCompleteTask = 60
     }
     
     func testSound(sound: String) {
         soundPlayer = SoundPlayer(sound: soundPath + sound )
         soundPlayer.setNumberOfLoops(0)
-        soundPlayer.play()
+        try! soundPlayer.play()
     }
     
     func triggerAlarm(){
         soundPlayer = SoundPlayer(sound: soundPath + sound )
         soundPlayer.setNumberOfLoops(-1)
-        soundPlayer.play()
+        try! soundPlayer.play()
     }
     
     func stopAlarm(){

@@ -81,15 +81,16 @@ class MotusTests: XCTestCase {
         
     }
     
-    /*func testExample() {
+    func testSoundPlayContinuousWhenTrggered() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-        let audioPlayer = SoundPlayer(sound:"Apex")
-        XCTAssertNil(audioPlayer)
-        audioPlayer.play();
-        XCTAssertTrue(audioPlayer.IsPlaying())
-        audioPlayer.stop();
-    }*/
+        let alarm = Alarm(time: NSDate(), sound: "Apex", task: .LOCATION, isSet: true)
+        XCTAssertNotNil(alarm)
+        alarm.triggerAlarm()
+        XCTAssertTrue(alarm.soundPlayer.IsPlaying())
+        XCTAssertEqual(alarm.soundPlayer.getNumberOfLoops(), -1)
+        alarm.stopAlarm()
+    }
     
    // func testPerformanceExample() {
    //     // This is an example of a performance test case.

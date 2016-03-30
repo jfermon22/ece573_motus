@@ -10,11 +10,13 @@ import UIKit
 
 enum AlarmTriggeredStates {
     case TRIGGER_ALARM
-    case WAITING_FOR_MOTION
+    case WAITING_FOR_ALARM_KILL
     case WAITING_FOR_TASK_COMPLETE
     case TASK_COMPLETE
 }
-
+enum AlarmTriggeredErrorType:ErrorType {
+    case ACCEL_UNAVAIL
+}
 
 class AlarmTriggeredViewController: UIViewController {
     
@@ -67,9 +69,11 @@ class AlarmTriggeredViewController: UIViewController {
             switch state! {
             case .TRIGGER_ALARM:
                 triggerAlarm()
+                state = .WAITING_FOR_ALARM_KILL
                 break;
-            case .WAITING_FOR_MOTION:
-                waitForMotion()
+            case .WAITING_FOR_ALARM_KILL:
+                waitForAlarmKilled()
+                state = .WAITING_FOR_TASK_COMPLETE
                 break;
             case .WAITING_FOR_TASK_COMPLETE:
                 waitForTaskComplete()
@@ -84,25 +88,39 @@ class AlarmTriggeredViewController: UIViewController {
     
     func triggerAlarm(){
         alarm.triggerAlarm()
-        state = .WAITING_FOR_MOTION
     }
     
-    func waitForMotion(){
-        
-        if !motionDetector!.start() {
-            print("waitForMotion: failed to start motion updates")
+    func waitForAlarmKilled() {
+        do {
+            try waitForMotion()
+            
+            alarm.stopAlarm()
+            
+            setTaskLabel()
+            
+        } catch _ {
+            let alertController = UIAlertController(title: "Error", message: "Motion Data Unavalable.\nClick to silence alarm", preferredStyle: .Alert)
+            
+            let OKAction = UIAlertAction(title: "OK", style: .Default) {
+                (action) in
+                self.alarm.stopAlarm()
+            }
+            
+            alertController.addAction(OKAction)
+    
+            presentViewController(alertController, animated: true, completion: nil)
         }
+    }
+
+
+    func waitForMotion() throws {
         
-        print("waiting for motion")
+        guard motionDetector!.start()
+            else { throw AlarmTriggeredErrorType.ACCEL_UNAVAIL }
         
         motionDetector!.waitTilDeviceMove()
-        
-        print("device moved")
+
         motionDetector!.stop()
-        
-        state = .WAITING_FOR_TASK_COMPLETE
-        alarm.stopAlarm()
-        setTaskLabel()
         
     }
     
