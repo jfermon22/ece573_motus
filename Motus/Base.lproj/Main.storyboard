@@ -54,6 +54,16 @@
                                     </button>
                                 </subviews>
                             </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8YS-xa-Zl4">
+                                <rect key="frame" x="20" y="36" width="260" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="32"/>
+                                <state key="normal" title="Test:Trigger Alarm">
+                                    <color key="titleColor" red="1" green="0.0588715764" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="testAlarmButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="jz9-ej-e6c"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
@@ -151,9 +161,11 @@
                         <outlet property="currentTaskLabel" destination="z7U-ko-38t" id="Lug-ww-U8N"/>
                         <outlet property="currentTimeLabel" destination="L1E-AV-dFh" id="8mq-1T-xZ7"/>
                         <outlet property="timeToCompleteTaskLabel" destination="mxG-Wu-QY9" id="Tnx-QT-sRE"/>
+                        <segue destination="fHY-NX-MEI" kind="unwind" identifier="UnwindAlarmTriggeredToMain" unwindAction="prepareForUnwind:" id="RUT-wh-BDy"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1K2-f4-DEl" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="fHY-NX-MEI" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="730" y="1241"/>
         </scene>

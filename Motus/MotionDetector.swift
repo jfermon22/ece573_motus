@@ -30,13 +30,6 @@ class MotionDetector : MotionManagerDelegate {
 
     
     func waitTilDeviceMove(){
-        //dispatch_semaphore_wait(waitSem, DISPATCH_TIME_FOREVER)
-        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)){
-        //    while !self.deviceMoved{
-        //    self.gotAccelUpdate(self.motionManager!.getMotionUpdate());
-        ////        usleep(100000)
-        //    }
-        //}
         dispatch_semaphore_wait(waitSem, DISPATCH_TIME_FOREVER)
         
     }

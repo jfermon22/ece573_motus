@@ -20,8 +20,17 @@ class MainViewController: UIViewController {
     var lastSegue:UIStoryboardSegue?
     var alarm:Alarm!
     var lastReadTime:String?
-    
     var timer:NSTimer!
+    
+    
+    //warning this is just for test. Remove button for final
+    @IBAction func testAlarmButtonPressed(sender: UIButton) {
+        alarm.time = NSDate()
+        print("alarm TRIGGERED from test button \(alarm.time!)")
+        performSegueWithIdentifier("AlarmTriggered", sender: self)
+    
+    }
+
     //MARK: Methods
     override func viewDidLoad() {
         super.viewDidLoad()

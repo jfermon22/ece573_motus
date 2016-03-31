@@ -50,18 +50,24 @@ class AlarmTriggeredViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         updateTime()
+        
         timer = NSTimer.scheduledTimerWithTimeInterval(1.0,
                                                        target: self,
                                                        selector: #selector(AlarmTriggeredViewController.updateTime),
                                                        userInfo: nil,
                                                        repeats: true)
-         runStateMachine()
+        let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
+        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+            self.runStateMachine()
+        }
+        
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
     
     func runStateMachine(){
         while state != AlarmTriggeredStates.TASK_COMPLETE {
@@ -76,7 +82,11 @@ class AlarmTriggeredViewController: UIViewController {
                 state = .WAITING_FOR_TASK_COMPLETE
                 break;
             case .WAITING_FOR_TASK_COMPLETE:
-                waitForTaskComplete()
+                if waitForTaskComplete() {
+                        state = .TASK_COMPLETE
+                } else  {
+                        state = .TRIGGER_ALARM
+                }
                 break;
             case .TASK_COMPLETE:
                 print("exiting")
@@ -84,6 +94,7 @@ class AlarmTriggeredViewController: UIViewController {
             }
             usleep(100000)
         }
+        performSegueWithIdentifier("UnwindAlarmTriggeredToMain", sender: self)
     }
     
     func triggerAlarm(){
@@ -99,35 +110,44 @@ class AlarmTriggeredViewController: UIViewController {
             setTaskLabel()
             
         } catch _ {
-            let alertController = UIAlertController(title: "Error", message: "Motion Data Unavalable.\nClick to silence alarm", preferredStyle: .Alert)
-            
-            let OKAction = UIAlertAction(title: "OK", style: .Default) {
-                (action) in
-                self.alarm.stopAlarm()
+            let waitSem = dispatch_semaphore_create(0)
+            dispatch_async(dispatch_get_main_queue()) {
+                
+                let alertController = UIAlertController(title: "Error", message: "Motion Data Unavalable.\nClick to silence alarm", preferredStyle: .Alert)
+                
+                
+                let OKAction = UIAlertAction(title: "OK", style: .Default) {
+                    (action) in
+                    self.alarm.stopAlarm()
+                    dispatch_semaphore_signal(waitSem)
+                }
+                
+                alertController.addAction(OKAction)
+                
+                self.presentViewController(alertController, animated: true, completion: nil)
             }
             
-            alertController.addAction(OKAction)
-    
-            presentViewController(alertController, animated: true, completion: nil)
+            dispatch_semaphore_wait(waitSem, DISPATCH_TIME_FOREVER)
         }
     }
-
-
+    
+    
     func waitForMotion() throws {
         
         guard motionDetector!.start()
             else { throw AlarmTriggeredErrorType.ACCEL_UNAVAIL }
         
         motionDetector!.waitTilDeviceMove()
-
+        
         motionDetector!.stop()
         
     }
     
-    func waitForTaskComplete(){
+    func waitForTaskComplete() -> Bool {
         var taskIsComplete = false
         
         print("waiting for task complete")
+        sleep(10)
         switch alarm.task! {
         case .LOCATION:
             locationDetector!.start()
@@ -143,12 +163,8 @@ class AlarmTriggeredViewController: UIViewController {
             break
             
         }
-        
-        if taskIsComplete {
-            state = .TASK_COMPLETE
-        } else  {
-            state = .TRIGGER_ALARM
-        }
+        taskIsComplete = true
+        return taskIsComplete
     }
     
     func setTaskLabel(){
@@ -166,11 +182,18 @@ class AlarmTriggeredViewController: UIViewController {
     }
     
     func updateTime(){
-        currentTimeLabel.text = TimeFunctions.formatTimeForDisplay(NSDate())
-        timeToCompleteTaskLabel.text = "\(timeToCompleteTask!)"
-        if state == .WAITING_FOR_TASK_COMPLETE {
-            timeToCompleteTaskLabel.text = "\(--timeToCompleteTask!)"
+        let priority = DISPATCH_QUEUE_PRIORITY_HIGH
+        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+            dispatch_async(dispatch_get_main_queue()) {
+                self.currentTimeLabel.text = TimeFunctions.formatTimeForDisplay(NSDate())
+                self.timeToCompleteTaskLabel.text = "\(self.timeToCompleteTask!)"
+                if self.state == .WAITING_FOR_TASK_COMPLETE {
+                    self.timeToCompleteTaskLabel.text = "\(--self.timeToCompleteTask!)"
+                }
+            }
         }
     }
+    
+    
     
 }
