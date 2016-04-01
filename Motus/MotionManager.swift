@@ -14,28 +14,35 @@ protocol MotionManagerDelegate {
 }
 
 class MotionManager {
+    //MARK: public variables
     static let sharedInstance = MotionManager()
-    let cmmotionmanager = CMMotionManager()
-    var currentOrientation:CMAccelerometerData?
-    var initialOrientation:CMAccelerometerData?
     var delegate:MotionManagerDelegate?
+    var updateInterval:NSTimeInterval {
+        set { cmmotionmanager.accelerometerUpdateInterval = newValue }
+        get { return cmmotionmanager.accelerometerUpdateInterval }
+    }
     
-    private init() {
+    //MARK: private variables
+    private let cmmotionmanager = CMMotionManager()
+    private(set) var currentOrientation:CMAccelerometerData?
+    
+    //MARK: Constructors
+    init() {
         cmmotionmanager.accelerometerUpdateInterval = NSTimeInterval(1)
     }
     
+    convenience init(updateInterval:NSTimeInterval){
+        self.init()
+        cmmotionmanager.accelerometerUpdateInterval = updateInterval
+    }
+    
     deinit {
-        if cmmotionmanager.accelerometerActive {
-            stopMotionUpdates()
-        }
+        stopMotionUpdates()
         currentOrientation = nil
         delegate = nil
     }
     
-    func setUpdateInterval(updateInterval:NSTimeInterval){
-        cmmotionmanager.accelerometerUpdateInterval = updateInterval
-    }
-    
+    //MARK: Update Functions
     func startMotionUpdates() -> Bool {
         if cmmotionmanager.accelerometerAvailable  {
             let handler:CMAccelerometerHandler = {
@@ -50,7 +57,7 @@ class MotionManager {
         else {
             print("startMotionUpdates - Accelorometer unavailable")
         }
-        
+        usleep(100)
         return cmmotionmanager.accelerometerActive
     }
 
@@ -63,7 +70,9 @@ class MotionManager {
     
     
     func stopMotionUpdates() {
-        cmmotionmanager.stopAccelerometerUpdates()
+        if cmmotionmanager.accelerometerActive {
+            cmmotionmanager.stopAccelerometerUpdates()
+        }
     }
     
 }

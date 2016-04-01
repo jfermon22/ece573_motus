@@ -12,42 +12,38 @@ import CoreMotion
 let DEVICE_MOTIONLESS_THRESHOLD = 0.01
 
 class MotionDetector : MotionManagerDelegate {
-    var motionManager:MotionManager?
-    let waitSem:dispatch_semaphore_t
-    var currentOrientation:CMAccelerometerData?
-    var initialOrientation:CMAccelerometerData?
-    var updateInterval:NSTimeInterval?
-    var deviceMoved:Bool
+    //MARK: public members
+    var updateInterval = NSTimeInterval(0.1)
 
+    //MARK: private members
+    private var motionManager = MotionManager.sharedInstance
+    private let waitSem = dispatch_semaphore_create(0)
+    private(set) var currentOrientation:CMAccelerometerData?
+    private(set) var initialOrientation:CMAccelerometerData?
+    private(set) var deviceMoved =  false
+   
+    //MARK: Constructors
     init() {
-        updateInterval = NSTimeInterval(0.1)
-        motionManager = MotionManager.sharedInstance
-        motionManager?.setUpdateInterval(updateInterval!)
-        waitSem = dispatch_semaphore_create(0)
-        deviceMoved = false
-        motionManager!.delegate = self
-    }
-
-    
-    func waitTilDeviceMove(){
-        dispatch_semaphore_wait(waitSem, DISPATCH_TIME_FOREVER)
-        
+        motionManager.updateInterval = updateInterval
+        motionManager.delegate = self
     }
     
-    func waitTilDeviceMove(timeout: dispatch_time_t){
-        let timeoutInSecs = timeout * 1000000000
-        dispatch_semaphore_wait(waitSem, timeoutInSecs )
+    deinit {
+        stop()
+        currentOrientation = nil
+        initialOrientation = nil
     }
     
+    //MARK: Update Methods
     func start() -> Bool {
         deviceMoved = false
         initialOrientation = nil
         currentOrientation = nil
-        return (motionManager?.startMotionUpdates())!
+        return motionManager.startMotionUpdates()
     }
     
     func stop() {
-        motionManager?.stopMotionUpdates()
+        motionManager.stopMotionUpdates()
         dispatch_semaphore_signal(waitSem)
     }
     
@@ -57,13 +53,23 @@ class MotionDetector : MotionManagerDelegate {
         }
         
         currentOrientation = orientation
+        
         deviceMoved = deviceInMotion()
-        //print( "motion update: x:\(currentAccel?.x) y:\(currentAccel?.y) z\(currentAccel?.z)")
-        if(deviceMoved)
-        {
+        
+        if(deviceMoved){
             dispatch_semaphore_signal(waitSem)
         }
+    }
 
+    //MARK: Wait methods
+    func waitTilDeviceMove(){
+        dispatch_semaphore_wait(waitSem, DISPATCH_TIME_FOREVER)
+        
+    }
+    
+    func waitTilDeviceMove(timeout: dispatch_time_t){
+        //timeout is in nanosecs
+        dispatch_semaphore_wait(waitSem, timeout )
     }
     
     
@@ -78,8 +84,8 @@ class MotionDetector : MotionManagerDelegate {
         let diffx = abs(accel1.x - accel2.x)
         let diffy = abs(accel1.y - accel2.y)
         let diffz = abs(accel1.y - accel2.y)
-        let absAccel = sqrt( diffx * diffx + diffy * diffy + diffz * diffz)
-        print("absdiff = \(absAccel)")
-        return absAccel > DEVICE_MOTIONLESS_THRESHOLD
+        let motionMagnitude = sqrt( pow(diffx,2) + pow(diffy,2) + pow(diffz,2) )
+        //print("motionMagnitude: \(motionMagnitude)")
+        return motionMagnitude > DEVICE_MOTIONLESS_THRESHOLD
     }
 }

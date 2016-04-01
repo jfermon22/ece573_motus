@@ -9,46 +9,91 @@
 import Foundation
 import CoreLocation
 
+
+enum LocationManagerErrors:ErrorType {
+    case NOT_DETERMINED
+    case RESTRICTED
+    case DENIED
+}
+
 protocol LocationManagerDelegate {
-    func didUpdateCurrentLocation(location:CLLocation)
+    func gotLocationUpdate(location:CLLocation)
     func failedToUpdateLocation (error: NSError)
 }
 
 
-class LocationManager:NSObject, CLLocationManagerDelegate  {
-    var cllocationManager:CLLocationManager?
-    var currentLocation:CLLocation?
+class LocationManager: NSObject, CLLocationManagerDelegate  {
+    //MARK: public variables
+    static let sharedInstance = LocationManager()
     var delegate:LocationManagerDelegate?
+    var accuracy:CLLocationAccuracy {
+        set { cllocationManager.desiredAccuracy = newValue }
+        get { return cllocationManager.desiredAccuracy }
+    }
+    var distanceFilter:CLLocationAccuracy {
+        set { cllocationManager.distanceFilter = newValue }
+        get { return cllocationManager.distanceFilter }
+    }
+    
+    //MARK: private variables
+    private let cllocationManager = CLLocationManager()
+    private(set) var currentLocation:CLLocation?
+    
+    //MARK: Constructors
+    override init() {
+        super.init()
+        cllocationManager.desiredAccuracy = kCLLocationAccuracyBest
+        cllocationManager.distanceFilter = 5
+        cllocationManager.delegate = self
+    }
     
     convenience init(accuracy:CLLocationAccuracy, distanceFilter:CLLocationDistance){
         self.init()
-        cllocationManager?.desiredAccuracy = accuracy
-        cllocationManager?.distanceFilter = distanceFilter
+        cllocationManager.desiredAccuracy = accuracy
+        cllocationManager.distanceFilter = distanceFilter
     }
     
-    override init() {
-        super.init()
-        cllocationManager = CLLocationManager()
-        cllocationManager?.delegate = self
+    deinit {
+        cllocationManager.stopUpdatingLocation()
+        currentLocation = nil
+        delegate = nil
     }
-    
-    func startUpdatingLocation() {
-        if CLLocationManager.authorizationStatus() == .NotDetermined {
-            cllocationManager?.requestWhenInUseAuthorization()
-            //cllocationManager?.requestAlwaysAuthorization()
+
+    //MARK: Update Methods
+    func startUpdatingLocation() throws {
+        var authStatus = CLLocationManager.authorizationStatus()
+        
+        if authStatus == .NotDetermined || authStatus  == .Denied {
+            cllocationManager.requestWhenInUseAuthorization()
         }
         
-        cllocationManager?.startUpdatingLocation()
+        authStatus = CLLocationManager.authorizationStatus()
+        
+        guard authStatus == .AuthorizedAlways || authStatus == .AuthorizedWhenInUse else {
+            switch authStatus {
+            case .Restricted:
+                throw LocationManagerErrors.RESTRICTED
+            case .NotDetermined:
+                throw LocationManagerErrors.NOT_DETERMINED
+            case .Denied:
+                throw LocationManagerErrors.DENIED
+            default:
+                return
+            }
+        }
+        
+        cllocationManager.startUpdatingLocation()
     }
     
     func stopUpdatingLocation() {
-        cllocationManager?.stopUpdatingLocation()
+        cllocationManager.stopUpdatingLocation()
     }
     
+    //MARK: CLLocationManagerDelegate Protocol Functions
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]){
         let location: AnyObject? = (locations as NSArray).lastObject
         currentLocation = location as? CLLocation
-        delegate!.didUpdateCurrentLocation(currentLocation!)
+        delegate!.gotLocationUpdate(currentLocation!)
     }
     
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {

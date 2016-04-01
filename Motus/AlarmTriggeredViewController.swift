@@ -111,9 +111,7 @@ class AlarmTriggeredViewController: UIViewController {
             
         } catch _ {
             let waitSem = dispatch_semaphore_create(0)
-            dispatch_async(dispatch_get_main_queue()) {
-                
-                let alertController = UIAlertController(title: "Error", message: "Motion Data Unavalable.\nClick to silence alarm", preferredStyle: .Alert)
+            dispatch_async(dispatch_get_main_queue()) {                let alertController = UIAlertController(title: "Error", message: "Motion Data Unavalable.\nClick to silence alarm", preferredStyle: .Alert)
                 
                 
                 let OKAction = UIAlertAction(title: "OK", style: .Default) {
