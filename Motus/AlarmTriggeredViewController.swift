@@ -83,9 +83,9 @@ class AlarmTriggeredViewController: UIViewController {
                 break;
             case .WAITING_FOR_TASK_COMPLETE:
                 if waitForTaskComplete() {
-                        state = .TASK_COMPLETE
+                    state = .TASK_COMPLETE
                 } else  {
-                        state = .TRIGGER_ALARM
+                    state = .TRIGGER_ALARM
                 }
                 break;
             case .TASK_COMPLETE:
@@ -111,7 +111,8 @@ class AlarmTriggeredViewController: UIViewController {
             
         } catch _ {
             let waitSem = dispatch_semaphore_create(0)
-            dispatch_async(dispatch_get_main_queue()) {                let alertController = UIAlertController(title: "Error", message: "Motion Data Unavalable.\nClick to silence alarm", preferredStyle: .Alert)
+            dispatch_async(dispatch_get_main_queue()) {
+                let alertController = UIAlertController(title: "Error", message: "Motion Data Unavalable.\nClick to silence alarm", preferredStyle: .Alert)
                 
                 
                 let OKAction = UIAlertAction(title: "OK", style: .Default) {
@@ -124,7 +125,6 @@ class AlarmTriggeredViewController: UIViewController {
                 
                 self.presentViewController(alertController, animated: true, completion: nil)
             }
-            
             dispatch_semaphore_wait(waitSem, DISPATCH_TIME_FOREVER)
         }
     }
@@ -145,12 +145,26 @@ class AlarmTriggeredViewController: UIViewController {
         var taskIsComplete = false
         
         print("waiting for task complete")
-        sleep(10)
         switch alarm.task! {
         case .LOCATION:
-            locationDetector!.start()
-            locationDetector!.waitTilDeviceMove(20,timeout: timeToCompleteTask)
-            taskIsComplete = locationDetector!.deviceMovedMinimum
+            guard locationDetector!.start() else {
+                let waitSem = dispatch_semaphore_create(0)
+                dispatch_async(dispatch_get_main_queue()) {
+                    let alertController = UIAlertController(title: "Location Data Unavalable", message: "Enable Location permission in settings", preferredStyle: .Alert)
+                    let OKAction = UIAlertAction(title: "OK", style: .Default) {
+                        (action) in
+                        dispatch_semaphore_signal(waitSem)
+                    }
+                    alertController.addAction(OKAction)
+                    self.presentViewController(alertController, animated: true, completion: nil)
+                }
+                dispatch_semaphore_wait(waitSem, DISPATCH_TIME_FOREVER)
+                return true
+            }
+            taskIsComplete = locationDetector!.waitTilDeviceMove(20,timeout: timeToCompleteTask)
+            //NSEC_PER_SEC
+            print ("taskiscomplete=\(taskIsComplete)")
+            locationDetector!.stop()
             break
         case .MOTION:
             motionDetector!.start()
@@ -161,7 +175,6 @@ class AlarmTriggeredViewController: UIViewController {
             break
             
         }
-        taskIsComplete = true
         return taskIsComplete
     }
     

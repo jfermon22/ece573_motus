@@ -19,6 +19,7 @@
 		5253078C1C83C3910018C296 /* Alarm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5253078B1C83C3910018C296 /* Alarm.swift */; };
 		525307901C83CA1E0018C296 /* SoundChooserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5253078F1C83CA1E0018C296 /* SoundChooserViewController.swift */; };
 		525307921C8959F30018C296 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525307911C8959F30018C296 /* Task.swift */; };
+		52964BAD1CAF912100555F7D /* MyUiAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52964BAC1CAF912100555F7D /* MyUiAlert.swift */; };
 		52CFE4871C7A21860024E8C5 /* AlarmTriggeredViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CFE4861C7A21860024E8C5 /* AlarmTriggeredViewController.swift */; };
 		52F96D2B1C61B10B0073D354 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F96D2A1C61B10B0073D354 /* AppDelegate.swift */; };
 		52F96D2D1C61B10B0073D354 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F96D2C1C61B10B0073D354 /* MainViewController.swift */; };
@@ -52,6 +53,7 @@
 		5253078B1C83C3910018C296 /* Alarm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Alarm.swift; sourceTree = "<group>"; };
 		5253078F1C83CA1E0018C296 /* SoundChooserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundChooserViewController.swift; sourceTree = "<group>"; };
 		525307911C8959F30018C296 /* Task.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
+		52964BAC1CAF912100555F7D /* MyUiAlert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyUiAlert.swift; sourceTree = "<group>"; };
 		52CFE4861C7A21860024E8C5 /* AlarmTriggeredViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlarmTriggeredViewController.swift; sourceTree = "<group>"; };
 		52F96D271C61B10B0073D354 /* Motus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Motus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52F96D2A1C61B10B0073D354 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 				5253078B1C83C3910018C296 /* Alarm.swift */,
 				5242EBC31C63016C00822F12 /* AlarmSetViewController.swift */,
 				52CFE4861C7A21860024E8C5 /* AlarmTriggeredViewController.swift */,
+				52964BAC1CAF912100555F7D /* MyUiAlert.swift */,
 				5253078F1C83CA1E0018C296 /* SoundChooserViewController.swift */,
 				5253074D1C83B3350018C296 /* SoundPlayer.swift */,
 				52F96D2C1C61B10B0073D354 /* MainViewController.swift */,
@@ -248,6 +251,7 @@
 				52F96D331C61B10B0073D354 /* Motus.xcdatamodeld in Sources */,
 				5253074E1C83B3350018C296 /* SoundPlayer.swift in Sources */,
 				525307521C83B3830018C296 /* GestureDetector.swift in Sources */,
+				52964BAD1CAF912100555F7D /* MyUiAlert.swift in Sources */,
 				5253074A1C83B1090018C296 /* TimeFunctions.swift in Sources */,
 				525307501C83B3530018C296 /* LocationDetector.swift in Sources */,
 				52F96D2B1C61B10B0073D354 /* AppDelegate.swift in Sources */,

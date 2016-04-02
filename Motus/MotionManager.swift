@@ -53,8 +53,7 @@ class MotionManager {
             print("startMotionUpdates - Started motion updates")
             cmmotionmanager.accelerometerUpdateInterval = NSTimeInterval(1)
             cmmotionmanager.startAccelerometerUpdatesToQueue(NSOperationQueue(), withHandler: handler)
-        }
-        else {
+        } else {
             print("startMotionUpdates - Accelorometer unavailable")
         }
         usleep(100)

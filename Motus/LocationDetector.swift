@@ -13,7 +13,7 @@ let FEET_PER_METER = 3.28084
 
 class LocationDetector: LocationManagerDelegate {
     //MARK: public members
-    var minMoveDistance:CLLocationDistance = 6.096 // meters in 20 feet
+    var minMoveDistance:CLLocationDistance = 30 // meters in 20 feet
     var accuracy:CLLocationAccuracy {
         set { locationManager.accuracy = newValue }
         get { return locationManager.accuracy }
@@ -25,7 +25,7 @@ class LocationDetector: LocationManagerDelegate {
     
     //MARK: private members
     private var locationManager = LocationManager.sharedInstance
-    private let waitSem = dispatch_semaphore_create(0)
+    private var waitSem = dispatch_semaphore_create(0)
     private(set) var initialLocation:CLLocation?
     private(set) var currentLocation:CLLocation?
     private(set) var deviceMovedMinimum = false
@@ -33,7 +33,7 @@ class LocationDetector: LocationManagerDelegate {
     //MARK: Constructors
     init() {
         locationManager.accuracy = kCLLocationAccuracyBest
-        locationManager.distanceFilter = 5
+        locationManager.distanceFilter = 10
         locationManager.delegate = self
     }
     
@@ -44,15 +44,16 @@ class LocationDetector: LocationManagerDelegate {
     }
     
     //MARK: Update Methods
-    func start() {
+    func start() -> Bool {
         deviceMovedMinimum = false
         initialLocation = nil
         currentLocation = nil
         do {
             try locationManager.startUpdatingLocation()
         } catch _ {
-            // TODO: add error handling here
+            return false
         }
+        return true
     }
     
     func stop() {
@@ -82,17 +83,23 @@ class LocationDetector: LocationManagerDelegate {
     
     //MARK: Wait methods
     func waitTilDeviceMove(feet:CLLocationDistance){
+        waitSem = dispatch_semaphore_create(0)
+        
         //convert to meters
         minMoveDistance = ( feet / FEET_PER_METER )
         dispatch_semaphore_wait(waitSem, DISPATCH_TIME_FOREVER)
     }
     
-    func waitTilDeviceMove(feet:CLLocationDistance, timeout: dispatch_time_t){
+    func waitTilDeviceMove(feet:CLLocationDistance, timeout: UInt64) -> Bool{
+        waitSem = dispatch_semaphore_create(0)
+        
         //convert to meters
         minMoveDistance = ( feet / FEET_PER_METER )
         
         //timeout in nanoseconds
-        dispatch_semaphore_wait(waitSem, timeout )
+        let timeoutNs = Int64(timeout) * Int64(NSEC_PER_SEC)
+        let time = dispatch_time(DISPATCH_TIME_NOW, timeoutNs )
+        return dispatch_semaphore_wait(waitSem, time ) == 0
     }
     
     private func didDeviceMoveMinimum() -> Bool {

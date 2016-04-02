@@ -22,7 +22,7 @@ protocol LocationManagerDelegate {
 }
 
 
-class LocationManager: NSObject, CLLocationManagerDelegate  {
+class LocationManager: NSObject, CLLocationManagerDelegate {
     //MARK: public variables
     static let sharedInstance = LocationManager()
     var delegate:LocationManagerDelegate?
@@ -66,22 +66,25 @@ class LocationManager: NSObject, CLLocationManagerDelegate  {
         if authStatus == .NotDetermined || authStatus  == .Denied {
             cllocationManager.requestWhenInUseAuthorization()
         }
-        
+        usleep(1000)
         authStatus = CLLocationManager.authorizationStatus()
         
         guard authStatus == .AuthorizedAlways || authStatus == .AuthorizedWhenInUse else {
             switch authStatus {
             case .Restricted:
+                print("LocationManager::startUpdatingLocation - authorizationStatus = .Restricted")
                 throw LocationManagerErrors.RESTRICTED
             case .NotDetermined:
+                print("LocationManager::startUpdatingLocation - authorizationStatus = .NotDetermined")
                 throw LocationManagerErrors.NOT_DETERMINED
             case .Denied:
+                print("LocationManager::startUpdatingLocation - authorizationStatus = .Denied")
                 throw LocationManagerErrors.DENIED
             default:
                 return
             }
         }
-        
+        print("LocationManager::startUpdatingLocation - starting location manager services")
         cllocationManager.startUpdatingLocation()
     }
     
