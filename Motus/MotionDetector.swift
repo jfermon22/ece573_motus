@@ -17,7 +17,7 @@ class MotionDetector : MotionManagerDelegate {
 
     //MARK: private members
     private var motionManager = MotionManager.sharedInstance
-    private let waitSem = dispatch_semaphore_create(0)
+    private var waitSem = dispatch_semaphore_create(0)
     private(set) var currentOrientation:CMAccelerometerData?
     private(set) var initialOrientation:CMAccelerometerData?
     private(set) var deviceMoved =  false
@@ -63,13 +63,17 @@ class MotionDetector : MotionManagerDelegate {
 
     //MARK: Wait methods
     func waitTilDeviceMove(){
+        waitSem = dispatch_semaphore_create(0)
         dispatch_semaphore_wait(waitSem, DISPATCH_TIME_FOREVER)
         
     }
     
-    func waitTilDeviceMove(timeout: dispatch_time_t){
+    func waitTilDeviceMove(timeout: UInt64){
+        waitSem = dispatch_semaphore_create(0)
         //timeout is in nanosecs
-        dispatch_semaphore_wait(waitSem, timeout )
+        let timeoutNs = Int64(timeout) * Int64(NSEC_PER_SEC)
+        let time = dispatch_time(DISPATCH_TIME_NOW, timeoutNs )
+        dispatch_semaphore_wait(waitSem, time )
     }
     
     

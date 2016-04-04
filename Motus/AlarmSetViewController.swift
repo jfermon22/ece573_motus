@@ -14,6 +14,8 @@ class AlarmSetViewController: UIViewController {
     @IBOutlet var soundButton: UIButton!
     var alarm:Alarm!
     @IBOutlet var alarmConfirmButton: UIButton!
+    var lastSegue:UIStoryboardSegue?
+    
     var lastCalledSegue:String?
 
     
@@ -29,6 +31,7 @@ class AlarmSetViewController: UIViewController {
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        lastSegue = segue
         if segue.identifier == "SelectSoundSegue"
         {
             if let navController = segue.destinationViewController as? UINavigationController {
@@ -40,6 +43,7 @@ class AlarmSetViewController: UIViewController {
     }
     
     @IBAction func prepareForUnwind(segue:UIStoryboardSegue) {
+        lastSegue=segue
         lastCalledSegue = segue.identifier
         if let soundVC = segue.sourceViewController as? SoundChooserViewController {
             alarm = soundVC.alarm

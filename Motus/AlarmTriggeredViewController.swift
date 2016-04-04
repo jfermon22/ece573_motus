@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 enum AlarmTriggeredStates {
     case TRIGGER_ALARM
@@ -18,7 +19,7 @@ enum AlarmTriggeredErrorType:ErrorType {
     case ACCEL_UNAVAIL
 }
 
-class AlarmTriggeredViewController: UIViewController {
+class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
     
     @IBOutlet var currentTimeLabel: UILabel!
     @IBOutlet var currentTaskLabel: UILabel!
@@ -34,12 +35,18 @@ class AlarmTriggeredViewController: UIViewController {
     var locationDetector:LocationDetector!
     var gestureDetector:GestureDetector!
     
+    //FIXME: Just For test. remove later
+    @IBOutlet var currentDistance: UILabel!
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         timeToCompleteTask = alarm.timeToCompleteTask
         state = .TRIGGER_ALARM        // Do any additional setup after loading the view.
         if locationDetector == nil {
             locationDetector = LocationDetector()
+            locationDetector.delegate = self
         }
         
         if motionDetector == nil {
@@ -144,6 +151,7 @@ class AlarmTriggeredViewController: UIViewController {
     func waitForTaskComplete() -> Bool {
         var taskIsComplete = false
         
+        self.timeToCompleteTask = alarm.timeToCompleteTask
         print("waiting for task complete")
         switch alarm.task! {
         case .LOCATION:
@@ -161,7 +169,7 @@ class AlarmTriggeredViewController: UIViewController {
                 dispatch_semaphore_wait(waitSem, DISPATCH_TIME_FOREVER)
                 return true
             }
-            taskIsComplete = locationDetector!.waitTilDeviceMove(20,timeout: timeToCompleteTask)
+            taskIsComplete = locationDetector!.waitTilDeviceMove(100,timeout: timeToCompleteTask)
             //NSEC_PER_SEC
             print ("taskiscomplete=\(taskIsComplete)")
             locationDetector!.stop()
@@ -203,6 +211,10 @@ class AlarmTriggeredViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    func gotLocationUpdate(location:CLLocation){
+        currentDistance.text = "Current Distance: \(location.distanceFromLocation(locationDetector.initialLocation!))"
     }
     
     
