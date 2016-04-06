@@ -14,12 +14,14 @@ enum LocationManagerErrors:ErrorType {
     case NOT_DETERMINED
     case RESTRICTED
     case DENIED
-    case UNCALIBRATED
+    case UNKNOWN
 }
 
 protocol LocationManagerDelegate {
     func gotLocationUpdate(location:CLLocation)
     func failedToUpdateLocation (error: NSError)
+    func didEnterRegion (region: CLRegion)
+    func didExitRegion (region: CLRegion)
 }
 
 //enum LocationManagerState {
@@ -44,10 +46,9 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     
     //MARK: private variables
     private let cllocationManager = CLLocationManager()
-    private(set) var currentLocation:CLLocation?
-    //private(set) var calibrated = false
-    //private(set) var state = LocationManagerState.Idle
-    //private var calibrateSem = dispatch_semaphore_create(0)
+    var currentLocation:CLLocation? {
+        get{return cllocationManager.location}
+    }
     
     //MARK: Constructors
     override init() {
@@ -65,13 +66,10 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     
     deinit {
         cllocationManager.stopUpdatingLocation()
-        currentLocation = nil
         delegate = nil
     }
-
-    //MARK: Update Methods
-    func startUpdatingLocation() throws {
-        
+    
+    func requestPermission() -> Bool {
         var authStatus = CLLocationManager.authorizationStatus()
         
         if authStatus == .NotDetermined || authStatus  == .Denied {
@@ -80,84 +78,56 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
             authStatus = CLLocationManager.authorizationStatus()
         }
         
-        guard authStatus == .AuthorizedAlways || authStatus == .AuthorizedWhenInUse else {
-            switch authStatus {
-            case .Restricted:
-                print("LocationManager::startUpdatingLocation - authorizationStatus = .Restricted")
-                throw LocationManagerErrors.RESTRICTED
-            case .NotDetermined:
-                print("LocationManager::startUpdatingLocation - authorizationStatus = .NotDetermined")
-                throw LocationManagerErrors.NOT_DETERMINED
-            case .Denied:
-                print("LocationManager::startUpdatingLocation - authorizationStatus = .Denied")
-                throw LocationManagerErrors.DENIED
-            default:
-                return
-            }
-        }
+        let permissionGranted = ( authStatus == .AuthorizedAlways || authStatus == .AuthorizedWhenInUse )
+        return permissionGranted
+    }
+
+    //MARK: Update Methods
+    func startUpdatingLocation() -> Bool {
+        
+        guard requestPermission() else { return false }
+        
         print("LocationManager::startUpdatingLocation - starting location manager services")
         cllocationManager.startUpdatingLocation()
-        //state = .Active
+        
+        return true
     }
-    
-    /*func startUpdatingLocationAndCalibrate() throws {
-        do {
-            try startUpdatingLocation()
-            if calibrate() {
-                print("Device Calibrated")
-            } else {
-                throw LocationManagerErrors.UNCALIBRATED
-            }
-        } catch _ {
-            throw LocationManagerErrors.UNCALIBRATED
-        }
-    }*/
-    
-   /* private func calibrate() -> Bool {
-        
-        state = .Calibrating
-        
-        calibrateSem = dispatch_semaphore_create(0)
-        let timeoutNs = Int64(15) * Int64(NSEC_PER_SEC)
-        let time = dispatch_time(DISPATCH_TIME_NOW, timeoutNs )
-        calibrated = dispatch_semaphore_wait(calibrateSem, time ) == 0
-        state = .Active
-        return calibrated
-    }*/
-    
     
     func stopUpdatingLocation() {
         cllocationManager.stopUpdatingLocation()
-        //state = .Idle
-        //calibrated = false
+    }
+    
+    func startMonitoringForRegion(region: CLRegion) -> Bool {
+        
+        guard requestPermission() else { return false }
+
+        print("LocationManager::startMonitoringRegion - start monitoring for region")
+        cllocationManager.startMonitoringForRegion(region)
+        return true
+    }
+    
+    func stopMonitoringForRegion(region: CLRegion) {
+        cllocationManager.stopMonitoringForRegion(region)
     }
     
     //MARK: CLLocationManagerDelegate Protocol Functions
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]){
-        let location: AnyObject? = (locations as NSArray).lastObject
-        currentLocation = location as? CLLocation
+        //let location: AnyObject? = (locations as NSArray).lastObject
+        //currentLocation = location as? CLLocation
         
         delegate!.gotLocationUpdate(currentLocation!)
-
-        /*if state == .Calibrating {
-            let horz = currentLocation?.horizontalAccuracy
-            let vert = currentLocation?.verticalAccuracy
-            let greaterAccuracy = ( horz > vert ) ? horz : vert
-            let lesserAccuracy = ( horz < vert ) ? horz : vert
-            //print ("Desc,\(currentLocation?.description)")
-            //print ("lesser:\(lesserAccuracy)   greater:\(greaterAccuracy)   speed:\(currentLocation?.speed)")
-            if lesserAccuracy >= 0 &&
-               greaterAccuracy <= 10  &&
-               currentLocation?.speed >= 0 {
-                dispatch_semaphore_signal(calibrateSem)
-            }
-        }*/
-        
     }
     
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
         delegate!.failedToUpdateLocation(error)
     }
+    
+    func locationManager( manager: CLLocationManager, didEnterRegion region: CLRegion) {
+        delegate?.didEnterRegion(region)
+    }
 
+    func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
+        delegate?.didExitRegion(region)
+    }
 }
 
