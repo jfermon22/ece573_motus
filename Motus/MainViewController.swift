@@ -104,7 +104,7 @@ class MainViewController: UIViewController {
         {
             if let atvc = segue.destinationViewController as? AlarmTriggeredViewController {
                 atvc.alarm = alarm
-                atvc.countDownActive = false
+                //atvc.countDownActive = false
             }
         }
     }

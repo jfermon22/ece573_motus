@@ -13,6 +13,8 @@ let FEET_PER_METER = 3.28084
 
 protocol LocationDetectorDelegate {
     func gotLocationUpdate(location:CLLocation)
+    func IsCalibrating()
+    func CalibrationComplete()
 }
 
 class LocationDetector: LocationManagerDelegate {
@@ -31,6 +33,7 @@ class LocationDetector: LocationManagerDelegate {
         get { return locationManager.distanceFilter }
     }
     var isWaiting = false
+    var isCalibrating = false
     
     //MARK: private members
     private var locationManager = LocationManager.sharedInstance
@@ -84,20 +87,34 @@ class LocationDetector: LocationManagerDelegate {
         let isAccuracyCalibrated = ( horz > vert ) ? (horz <= 15) : (vert <= 15)
         let isAccuracyValid = (horz >= 0 && vert >= 0)
         let isSpeedValid = currentLocation?.speed >= 0
+        let isDataNotStale = currentLocation?.timestamp.timeIntervalSinceNow < 1
         
-        //verify that our latest update dated is valid, and accurate enough
-        guard isAccuracyValid && isSpeedValid && isAccuracyCalibrated else {
-             print ("isAccuracyCalibrated:\(isAccuracyCalibrated) isAccuracyValid:\(isAccuracyValid)   isSpeedValid:\(isSpeedValid)")
+        //verify that our latest updated value is valid, and accurate enough
+        guard isAccuracyValid && isSpeedValid && isAccuracyCalibrated && isDataNotStale else {
+            //print ("isAccuracyCalibrated:\(isAccuracyCalibrated) isAccuracyValid:\(isAccuracyValid)   isSpeedValid:\(isSpeedValid)")
             //readings have become invalid resetting 0
             initialLocation = nil
+            
+            //fires delegate method to alert receiver that location is recalibrating
+            if !isCalibrating {
+                isCalibrating = true
+                print("calling IsCalibrating")
+                delegate?.IsCalibrating()
+            }
             return
+        }
+        //fires delegate method to alert receiver that device is not calibrating
+        if isCalibrating {
+            isCalibrating = false
+            print("calling CalibrationComplete")
+            delegate?.CalibrationComplete()
         }
         
         //if initialLocation is nil, then set it and move on
         //no need to check distance because it will be 0
         if (initialLocation == nil) {
-            print("initial location set")
-                initialLocation = currentLocation
+            //print("initial location set")
+            initialLocation = currentLocation
         }
         else if( didDeviceMoveMinimum() ) {
             dispatch_semaphore_signal(waitSem)
@@ -116,7 +133,7 @@ class LocationDetector: LocationManagerDelegate {
 
     func didExitRegion(region: CLRegion) {
         print("Device exited region")
-          dispatch_semaphore_signal(waitSem)
+        dispatch_semaphore_signal(waitSem)
     }
 
     

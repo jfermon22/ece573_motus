@@ -106,23 +106,21 @@
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CurrentDistance:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3iI-8A-VSa">
-                                        <rect key="frame" x="215" y="192" width="130" height="21"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="1" green="0.0588715764" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="ElG-vU-5PE">
-                                        <rect key="frame" x="150" y="314" width="260" height="85"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="ElG-vU-5PE">
+                                        <rect key="frame" x="10" y="237" width="540" height="85"/>
                                         <subviews>
-                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="To Permanently Silence Alarm:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n1y-AA-2Xv">
-                                                <rect key="frame" x="0.0" y="0.0" width="260" height="21"/>
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="To Permanently Silence Alarm:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n1y-AA-2Xv">
+                                                <rect key="frame" x="0.0" y="0.0" width="540" height="21"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Move 20-ft" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z7U-ko-38t">
-                                                <rect key="frame" x="0.0" y="21" width="260" height="64"/>
+                                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="M6a-V4-xZh">
+                                                <rect key="frame" x="0.0" y="21" width="540" height="0.0"/>
+                                                <color key="color" red="0.16986980769999999" green="0.78875600089999998" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            </activityIndicatorView>
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Move 20-ft" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z7U-ko-38t">
+                                                <rect key="frame" x="0.0" y="21" width="540" height="64"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="53"/>
                                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
@@ -153,6 +151,10 @@
                                         </subviews>
                                     </stackView>
                                 </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="ElG-vU-5PE" secondAttribute="trailing" constant="10" id="Fxy-dO-ZE7"/>
+                                    <constraint firstItem="ElG-vU-5PE" firstAttribute="leading" secondItem="AKn-PF-rpy" secondAttribute="leading" constant="10" id="Wjq-JB-K9s"/>
+                                </constraints>
                             </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -164,9 +166,10 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="currentDistance" destination="3iI-8A-VSa" id="6FM-hv-4mM"/>
+                        <outlet property="activityIndicator" destination="M6a-V4-xZh" id="DLX-WH-lqS"/>
                         <outlet property="currentTaskLabel" destination="z7U-ko-38t" id="Lug-ww-U8N"/>
                         <outlet property="currentTimeLabel" destination="L1E-AV-dFh" id="8mq-1T-xZ7"/>
+                        <outlet property="instructionsLabel" destination="n1y-AA-2Xv" id="WIt-y4-AYQ"/>
                         <outlet property="timeToCompleteTaskLabel" destination="mxG-Wu-QY9" id="Tnx-QT-sRE"/>
                         <segue destination="fHY-NX-MEI" kind="unwind" identifier="UnwindAlarmTriggeredToMain" unwindAction="prepareForUnwind:" id="RUT-wh-BDy"/>
                     </connections>

@@ -21,29 +21,27 @@ enum AlarmTriggeredErrorType:ErrorType {
 
 class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
     
+    //MARK:Member Variables
+    @IBOutlet var instructionsLabel: UILabel!
     @IBOutlet var currentTimeLabel: UILabel!
     @IBOutlet var currentTaskLabel: UILabel!
     @IBOutlet var timeToCompleteTaskLabel: UILabel!
-    
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
     var alarm:Alarm!
-    var timeToCompleteTask:UInt64!
-    var timer:NSTimer!
-    var countDownActive:Bool!
-    var state:AlarmTriggeredStates!
+    private(set) var pauseCountdown = false
+    private(set) var state:AlarmTriggeredStates!
+    private var timeToCompleteTask:UInt64!
+    private var motionDetector:MotionDetector!
+    private var locationDetector:LocationDetector!
+    private var gestureDetector:GestureDetector!
+    private var timer:NSTimer!
     
-    var motionDetector:MotionDetector!
-    var locationDetector:LocationDetector!
-    var gestureDetector:GestureDetector!
-    
-    //FIXME: Just For test. remove later
-    @IBOutlet var currentDistance: UILabel!
-    
-    
-    
+    //MARK: ViewController Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         timeToCompleteTask = alarm.timeToCompleteTask
         state = .TRIGGER_ALARM        // Do any additional setup after loading the view.
+        showActivityIndicator(false)
         if locationDetector == nil {
             locationDetector = LocationDetector()
             locationDetector.delegate = self
@@ -84,6 +82,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
     }
     
     override func viewWillDisappear(animated: Bool) {
+        motionDetector!.stop()
         locationDetector!.stop()
     }
     
@@ -92,7 +91,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-    
+    //MARK:State Methods
     func runStateMachine(){
         while state != AlarmTriggeredStates.TASK_COMPLETE {
             print("runStateMachine: state: \(state)")
@@ -123,6 +122,11 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
     
     func triggerAlarm(){
         alarm.triggerAlarm()
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
+            dispatch_async(dispatch_get_main_queue()) {
+                self.instructionsLabel.text = "Move to Momentarily Silence Alarm"
+            }
+        }
     }
     
     func waitForAlarmKilled() {
@@ -203,12 +207,11 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
     }
     
     func updateTime(){
-        let priority = DISPATCH_QUEUE_PRIORITY_HIGH
-        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {
             dispatch_async(dispatch_get_main_queue()) {
                 self.currentTimeLabel.text = TimeFunctions.formatTimeForDisplay(NSDate())
                 self.timeToCompleteTaskLabel.text = "\(self.timeToCompleteTask!)"
-                if self.state == .WAITING_FOR_TASK_COMPLETE {
+                if self.state == .WAITING_FOR_TASK_COMPLETE && !self.pauseCountdown {
                     self.timeToCompleteTaskLabel.text = "\(--self.timeToCompleteTask!)"
                 }
             }
@@ -216,13 +219,47 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
     }
     
     func gotLocationUpdate(location:CLLocation){
+        var distancestr = ""
         if locationDetector.initialLocation != nil {
-            currentDistance.text = "Current Distance: \(location.distanceFromLocation(locationDetector.initialLocation!))"
-        } else {
-            currentDistance.text = "Current Distance: \(location.distanceFromLocation(location))"
+            let distanceFeet = location.distanceFromLocation(locationDetector.initialLocation!) * FEET_PER_METER
+            let distance = 20.0 - distanceFeet
+            distancestr = String(format: "Move %.00f ft.",  distance )
+            if distance <= 0 {
+                distancestr =  "Complete!"
+            }
         }
+        
+        currentTaskLabel.text = distancestr
+       
     }
     
+    func IsCalibrating() {
+        pauseCountdown = true
+        let shouldShow = true
+        showActivityIndicator(shouldShow)
+    }
+    
+    func CalibrationComplete() {
+        pauseCountdown = false
+        let shouldShow = false
+        showActivityIndicator(shouldShow)
+    }
+    
+    func showActivityIndicator(shouldShow:Bool){
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
+            dispatch_async(dispatch_get_main_queue()) {
+                if shouldShow {
+                    self.instructionsLabel.text = "Location Services Calibrating..."
+                    self.currentTaskLabel.hidden = true
+                    self.activityIndicator.startAnimating()
+                } else {
+                    self.instructionsLabel.text = "To Permanently Silence Alarm"
+                    self.currentTaskLabel.hidden = false
+                    self.activityIndicator.stopAnimating()
+                }
+            }
+        }
+    }
     
     
 }
