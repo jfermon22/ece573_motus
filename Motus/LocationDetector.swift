@@ -10,6 +10,7 @@ import Foundation
 import CoreLocation
 
 let FEET_PER_METER = 3.28084
+let LOCATION_PRECISION = 10.0
 
 protocol LocationDetectorDelegate {
     func gotLocationUpdate(location:CLLocation)
@@ -84,14 +85,14 @@ class LocationDetector: LocationManagerDelegate {
         
         let horz = currentLocation?.horizontalAccuracy
         let vert = currentLocation?.verticalAccuracy
-        let isAccuracyCalibrated = ( horz > vert ) ? (horz <= 15) : (vert <= 15)
+        let isPreciseEnough = ( horz > vert ) ? (horz <= LOCATION_PRECISION) : (vert <= LOCATION_PRECISION)
         let isAccuracyValid = (horz >= 0 && vert >= 0)
-        let isSpeedValid = currentLocation?.speed >= 0
+        let isSpeedValid = currentLocation?.speed > 0
         let isDataNotStale = currentLocation?.timestamp.timeIntervalSinceNow < 1
         
         //verify that our latest updated value is valid, and accurate enough
-        guard isAccuracyValid && isSpeedValid && isAccuracyCalibrated && isDataNotStale else {
-            //print ("isAccuracyCalibrated:\(isAccuracyCalibrated) isAccuracyValid:\(isAccuracyValid)   isSpeedValid:\(isSpeedValid)")
+        guard isAccuracyValid && isSpeedValid && isPreciseEnough && isDataNotStale else {
+            print ("isPreciseEnough:\(isPreciseEnough) isAccuracyValid:\(isAccuracyValid) isSpeedValid:\(isSpeedValid)")
             //readings have become invalid resetting 0
             initialLocation = nil
             
@@ -103,17 +104,18 @@ class LocationDetector: LocationManagerDelegate {
             }
             return
         }
+        
         //fires delegate method to alert receiver that device is not calibrating
         if isCalibrating {
             isCalibrating = false
             print("calling CalibrationComplete")
             delegate?.CalibrationComplete()
         }
-        
+        print(" currrentspeed: \(currentLocation?.speed)")
         //if initialLocation is nil, then set it and move on
         //no need to check distance because it will be 0
         if (initialLocation == nil) {
-            //print("initial location set")
+            print("initial location set")
             initialLocation = currentLocation
         }
         else if( didDeviceMoveMinimum() ) {

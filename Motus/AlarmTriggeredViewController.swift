@@ -45,6 +45,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
         if locationDetector == nil {
             locationDetector = LocationDetector()
             locationDetector.delegate = self
+            locationDetector.distanceFilter = 1.0
             guard locationDetector!.start() else {
                 let waitSem = dispatch_semaphore_create(0)
                 dispatch_async(dispatch_get_main_queue()) {
@@ -221,12 +222,14 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
     func gotLocationUpdate(location:CLLocation){
         var distancestr = ""
         if locationDetector.initialLocation != nil {
-            let distanceFeet = location.distanceFromLocation(locationDetector.initialLocation!) * FEET_PER_METER
+            let distanceFeet = locationDetector.currentLocation!.distanceFromLocation(locationDetector.initialLocation!) * FEET_PER_METER
             let distance = 20.0 - distanceFeet
             distancestr = String(format: "Move %.00f ft.",  distance )
             if distance <= 0 {
                 distancestr =  "Complete!"
             }
+        } else if state == .WAITING_FOR_TASK_COMPLETE {
+            distancestr = "Move 20 ft."
         }
         
         currentTaskLabel.text = distancestr
@@ -256,6 +259,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
                     self.instructionsLabel.text = "To Permanently Silence Alarm"
                     self.currentTaskLabel.hidden = false
                     self.activityIndicator.stopAnimating()
+                    self.gotLocationUpdate(CLLocation())
                 }
             }
         }
