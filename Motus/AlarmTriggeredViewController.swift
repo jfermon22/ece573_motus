@@ -36,6 +36,10 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
     private var gestureDetector:GestureDetector!
     private var timer:NSTimer!
     
+    //MARK: FIXME
+    @IBOutlet var locationTestDataLabel: UILabel!
+    
+    
     //MARK: ViewController Methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -233,6 +237,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
         }
         
         currentTaskLabel.text = distancestr
+        locationTestDataLabel.text = locationDetector.currentLocation?.description
        
     }
     

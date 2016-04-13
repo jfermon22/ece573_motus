@@ -41,9 +41,17 @@ class LocationDetector: LocationManagerDelegate {
     private var waitSem = dispatch_semaphore_create(0)
     private(set) var initialLocation:CLLocation?
     var currentLocation:CLLocation? {
-        get{return locationManager.currentLocation}
+        get { return locationManager.currentLocation }
     }
     private var _minMoveDistance:CLLocationDistance = 20 // meters in 20 feet
+    var latestReadingAccuracy:CLLocationAccuracy? {
+        get {
+            let vertAcc = currentLocation?.verticalAccuracy
+            let horzAcc = currentLocation?.horizontalAccuracy
+            return ( vertAcc > horzAcc ) ? vertAcc : horzAcc
+        }
+    }
+    private var bestAccuracy:CLLocationAccuracy?
     
     //MARK: Constructors
     init() {
@@ -85,14 +93,15 @@ class LocationDetector: LocationManagerDelegate {
         
         let horz = currentLocation?.horizontalAccuracy
         let vert = currentLocation?.verticalAccuracy
-        let isPreciseEnough = ( horz > vert ) ? (horz <= LOCATION_PRECISION) : (vert <= LOCATION_PRECISION)
-        let isAccuracyValid = (horz >= 0 && vert >= 0)
+        let isPreciseEnough = latestReadingAccuracy <= LOCATION_PRECISION
+        let isAccuracyValid = ( horz >= 0 && vert >= 0 )
         let isSpeedValid = currentLocation?.speed > 0
         let isDataNotStale = currentLocation?.timestamp.timeIntervalSinceNow < 1
         
         //verify that our latest updated value is valid, and accurate enough
         guard isAccuracyValid && isSpeedValid && isPreciseEnough && isDataNotStale else {
             print ("isPreciseEnough:\(isPreciseEnough) isAccuracyValid:\(isAccuracyValid) isSpeedValid:\(isSpeedValid)")
+            print( "Accuracy is +- \(latestReadingAccuracy)")
             //readings have become invalid resetting 0
             initialLocation = nil
             
@@ -114,9 +123,10 @@ class LocationDetector: LocationManagerDelegate {
         print(" currrentspeed: \(currentLocation?.speed)")
         //if initialLocation is nil, then set it and move on
         //no need to check distance because it will be 0
-        if (initialLocation == nil) {
+        if (initialLocation == nil  ||  latestReadingAccuracy < bestAccuracy ) {
             print("initial location set")
             initialLocation = currentLocation
+            bestAccuracy = latestReadingAccuracy
         }
         else if( didDeviceMoveMinimum() ) {
             dispatch_semaphore_signal(waitSem)
@@ -177,7 +187,7 @@ class LocationDetector: LocationManagerDelegate {
         
         let distance = currentLocation!.distanceFromLocation(initialLocation!)
         
-        print("distance: \(distance) +- \((currentLocation?.horizontalAccuracy > currentLocation?.verticalAccuracy) ? currentLocation?.horizontalAccuracy : currentLocation?.verticalAccuracy)")
+        print("distance: \(distance) +- \(latestReadingAccuracy)")
         return distance > minMoveDistance
     }
 }
