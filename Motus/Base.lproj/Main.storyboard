@@ -107,7 +107,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="ElG-vU-5PE">
-                                        <rect key="frame" x="10" y="227" width="540" height="106"/>
+                                        <rect key="frame" x="10" y="216" width="540" height="127"/>
                                         <subviews>
                                             <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="To Permanently Silence Alarm:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n1y-AA-2Xv">
                                                 <rect key="frame" x="0.0" y="0.0" width="540" height="21"/>
@@ -127,6 +127,12 @@
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="location testdata" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t9y-H1-3TR">
                                                 <rect key="frame" x="0.0" y="85" width="540" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="1" green="0.0588715764" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="activity testdata" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pWo-rO-YG8">
+                                                <rect key="frame" x="0.0" y="106" width="540" height="21"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" red="1" green="0.0588715764" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
@@ -173,6 +179,7 @@
                     </view>
                     <connections>
                         <outlet property="activityIndicator" destination="M6a-V4-xZh" id="DLX-WH-lqS"/>
+                        <outlet property="activityTestDataLabel" destination="pWo-rO-YG8" id="emk-sW-seZ"/>
                         <outlet property="currentTaskLabel" destination="z7U-ko-38t" id="Lug-ww-U8N"/>
                         <outlet property="currentTimeLabel" destination="L1E-AV-dFh" id="8mq-1T-xZ7"/>
                         <outlet property="instructionsLabel" destination="n1y-AA-2Xv" id="WIt-y4-AYQ"/>

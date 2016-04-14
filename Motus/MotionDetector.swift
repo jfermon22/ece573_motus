@@ -39,11 +39,11 @@ class MotionDetector : MotionManagerDelegate {
         deviceMoved = false
         initialOrientation = nil
         currentOrientation = nil
-        return motionManager.startMotionUpdates()
+        return motionManager.startUpdates()
     }
     
     func stop() {
-        motionManager.stopMotionUpdates()
+        motionManager.stopUpdates()
         dispatch_semaphore_signal(waitSem)
     }
     

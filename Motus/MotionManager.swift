@@ -37,13 +37,13 @@ class MotionManager {
     }
     
     deinit {
-        stopMotionUpdates()
+        stopUpdates()
         currentOrientation = nil
         delegate = nil
     }
     
     //MARK: Update Functions
-    func startMotionUpdates() -> Bool {
+    func startUpdates() -> Bool {
         if cmmotionmanager.accelerometerAvailable  {
             let handler:CMAccelerometerHandler = {
                 (data: CMAccelerometerData?, error: NSError?) -> Void in
@@ -60,7 +60,7 @@ class MotionManager {
         return cmmotionmanager.accelerometerActive
     }
 
-    func getMotionUpdate() -> CMAccelerometerData {
+    func getUpdate() -> CMAccelerometerData {
         if (cmmotionmanager.accelerometerData == nil) {
             return CMAccelerometerData()
         }
@@ -68,7 +68,7 @@ class MotionManager {
     }
     
     
-    func stopMotionUpdates() {
+    func stopUpdates() {
         if cmmotionmanager.accelerometerActive {
             cmmotionmanager.stopAccelerometerUpdates()
         }

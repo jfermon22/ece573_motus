@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreLocation
+import CoreMotion
 
 enum AlarmTriggeredStates {
     case TRIGGER_ALARM
@@ -38,6 +39,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
     
     //MARK: FIXME
     @IBOutlet var locationTestDataLabel: UILabel!
+    @IBOutlet var activityTestDataLabel: UILabel!
     
     
     //MARK: ViewController Methods
@@ -49,7 +51,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
         if locationDetector == nil {
             locationDetector = LocationDetector()
             locationDetector.delegate = self
-            locationDetector.distanceFilter = 1.0
+            locationDetector.distanceFilter = kCLDistanceFilterNone
             guard locationDetector!.start() else {
                 let waitSem = dispatch_semaphore_create(0)
                 dispatch_async(dispatch_get_main_queue()) {
@@ -238,7 +240,46 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
         
         currentTaskLabel.text = distancestr
         locationTestDataLabel.text = locationDetector.currentLocation?.description
-       
+        
+    }
+    
+    func gotMotionActivityUpdate(activity: CMMotionActivity) {
+        var currentActivity = ""
+        var conf:String!
+        switch activity.confidence {
+        case .Low:
+            conf = "Low"
+            break
+        case .Medium:
+            conf = "Medium"
+            break
+        case .High:
+            conf = "High"
+            break
+        }
+        currentActivity.appendContentsOf("New activity(\(conf)):")
+        //var started = activity.startDate;
+        if (activity.stationary){
+            currentActivity.appendContentsOf("Stationary,")
+        }
+        if (activity.running){
+            currentActivity.appendContentsOf("Running,")
+        }
+        if (activity.automotive){
+            currentActivity.appendContentsOf("Driving,")
+        }
+        if (activity.walking){
+            currentActivity.appendContentsOf("Walking,")
+        }
+        if (activity.cycling){
+            currentActivity.appendContentsOf("Cycling,")
+        }
+        if (activity.unknown){
+            currentActivity.appendContentsOf("Unknown")
+        }
+        
+        print(currentActivity)
+        activityTestDataLabel.text = currentActivity
     }
     
     func IsCalibrating() {
