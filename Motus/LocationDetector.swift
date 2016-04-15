@@ -12,6 +12,7 @@ import CoreMotion
 
 let FEET_PER_METER = 3.28084
 let LOCATION_PRECISION = 10.0
+let INVALID_READING = -1.0
 
 protocol LocationDetectorDelegate {
     func gotLocationUpdate(location:CLLocation)
@@ -51,7 +52,7 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate {
         }
         get { return _initialLocation }
     }
-    private var _minMoveDistance:CLLocationDistance = 20 // meters in 20 feet
+    private var _minMoveDistance:CLLocationDistance = 6 // ~20 feet
     private var bestAccuracy:CLLocationAccuracy?
     private var hasBecomeMobileSinceIntialLocationSet = false
     private var _initialLocation:CLLocation?
@@ -68,6 +69,7 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate {
         get {
             let vertAcc = currentLocation?.verticalAccuracy
             let horzAcc = currentLocation?.horizontalAccuracy
+            guard vertAcc >= 0 && horzAcc >= 0 else  { return INVALID_READING }
             return ( vertAcc > horzAcc ) ? vertAcc : horzAcc
         }
     }
@@ -108,30 +110,24 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate {
     //MARK: LocationManagerDelegate Protocol Functions
     func gotLocationUpdate(location:CLLocation){
         
-        delegate!.gotLocationUpdate(currentLocation!)
-        
         //if no one is waiting to see if we moved then just return
         guard isWaiting else { return }
-        
-        let horz = currentLocation?.horizontalAccuracy
-        let vert = currentLocation?.verticalAccuracy
-        let isPreciseEnough = latestReadingAccuracy <= LOCATION_PRECISION
-        let isAccuracyValid = ( horz >= 0 && vert >= 0 )
-        let isSpeedValid = currentLocation?.speed >= 0
-        let isDataStale = currentLocation?.timestamp.timeIntervalSinceNow > 1
+
+        let isLocationDataValid = latestReadingAccuracy <= LOCATION_PRECISION &&
+            latestReadingAccuracy != INVALID_READING &&
+            currentLocation?.timestamp.timeIntervalSinceNow < 1
         
         //verify that our latest updated value is valid, and accurate enough
-        guard isAccuracyValid && isSpeedValid && isPreciseEnough && !isDataStale else {
-            //print ("isPreciseEnough:\(isPreciseEnough) isAccuracyValid:\(isAccuracyValid) isSpeedValid:\(isSpeedValid) isDataStale:\(isDataStale)")
-            if !isAccuracyValid {
-                print( "Accuracy is +- \(latestReadingAccuracy)")
-            }
-            //readings have become invalid resetting 0
+        guard isLocationDataValid else {
+
+            print( "Location Data invalid. Accuracy: +- \(latestReadingAccuracy)")
+
+            //readings have become invalid resetting intial location
             initialLocation = nil
             
             //fires delegate method to alert receiver that location is recalibrating
             if !isCalibrating {
-                print("calling IsCalibrating")
+                //print("calling IsCalibrating")
                 isCalibrating = true
                 delegate?.IsCalibrating()
             }
@@ -141,17 +137,19 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate {
         //fires delegate method to alert receiver that device is not calibrating
         if isCalibrating {
             isCalibrating = false
-            print("calling CalibrationComplete")
+            //print("calling CalibrationComplete")
             delegate?.CalibrationComplete()
         }
         
         //if initialLocation is nil, then set it and move on
         //no need to check distance because it will be 0
-        if (initialLocation == nil  ||  latestReadingAccuracy < bestAccuracy ) {
+        //if (initialLocation == nil  ||  latestReadingAccuracy < bestAccuracy ) {
+        if (initialLocation == nil ) {
             print("initial location set")
             initialLocation = currentLocation
-            bestAccuracy = latestReadingAccuracy
+            bestAccuracy = (latestReadingAccuracy < bestAccuracy) ? latestReadingAccuracy : bestAccuracy
         } else if( didDeviceMoveMinimum() ) {
+            print ("SEMPOSTED")
             dispatch_semaphore_signal(waitSem)
         }
         
@@ -185,13 +183,15 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate {
             !motionActivity.unknown
         
         guard !noActivity else {
-            print("Received blank motion activity")
+            //print("Received blank motion activity")
             return
         }
         
         if !hasBecomeMobileSinceIntialLocationSet &&
         !motionActivity.stationary &&
         (motionActivity.confidence == .Medium || motionActivity.confidence == .High ) {
+            print("resetting initial location user in motion")
+            initialLocation = currentLocation
             hasBecomeMobileSinceIntialLocationSet = true
         }
         delegate?.gotMotionActivityUpdate(motionActivity)
@@ -233,8 +233,9 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate {
     
     private func didDeviceMoveMinimum() -> Bool {
         if hasBecomeMobileSinceIntialLocationSet {
+            delegate!.gotLocationUpdate(currentLocation!)
             let distance = currentLocation!.distanceFromLocation(initialLocation!)
-            print("distance: \(distance) +- \(latestReadingAccuracy)")
+            print("distance: \(distance) +- \(latestReadingAccuracy!)   minMoveDistance: \(minMoveDistance))")
             return distance > minMoveDistance
         } else {
             print("didDeviceMoveMinimum::has not begun moving since initialLocationSet")
