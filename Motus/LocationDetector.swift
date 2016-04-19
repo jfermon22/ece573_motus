@@ -188,8 +188,8 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate {
         }
         
         if !hasBecomeMobileSinceIntialLocationSet &&
-        !motionActivity.stationary &&
-        (motionActivity.confidence == .Medium || motionActivity.confidence == .High ) {
+            !motionActivity.stationary {
+            //&& (motionActivity.confidence == .Medium || motionActivity.confidence == .High ) {
             print("resetting initial location user in motion")
             initialLocation = currentLocation
             hasBecomeMobileSinceIntialLocationSet = true
@@ -198,8 +198,8 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate {
     }
     
     //MARK: Wait methods
-    func waitTilDeviceMove(distance:CLLocationDistance){
-        waitTilDeviceMove(distance, timeout: DISPATCH_TIME_FOREVER)
+    func waitTilDeviceMove(distance:CLLocationDistance) -> Bool {
+       return waitTilDeviceMove(distance, timeout: DISPATCH_TIME_FOREVER)
     }
     
     func waitTilDeviceMove(distance:CLLocationDistance, timeout: UInt64) -> Bool{

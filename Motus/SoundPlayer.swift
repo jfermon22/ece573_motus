@@ -9,6 +9,7 @@
 import Foundation
 import AVFoundation
 
+
 enum SoundPlayerError: ErrorType {
     case URL_NIL
 }
@@ -34,6 +35,9 @@ class SoundPlayer {
             thisSound = sound
         }
         soundPath = NSURL(fileURLWithPath: thisSound)
+        //MARK:FIXME commented out for late night debugging
+        //try! AVAudioSession.sharedInstance().setCategory({AVAudioSessionCategoryPlayback}())
+        //try! AVAudioSession.sharedInstance().setActive(true)
         try! audioPlayer = AVAudioPlayer(contentsOfURL: soundPath!)
         audioPlayer.numberOfLoops = -1
         audioPlayer.prepareToPlay()

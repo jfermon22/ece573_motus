@@ -8,6 +8,8 @@
 
 import UIKit
 
+let TEST_MODE =  true
+
 class MainViewController: UIViewController {
 
     //MARK: members
@@ -34,8 +36,12 @@ class MainViewController: UIViewController {
     //MARK: Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        if TEST_MODE {
+            
+        }
+        
         if alarm == nil {
-            alarm = Alarm(time: NSDate(), sound: "Apex", task: Task.LOCATION, isSet:false)
+            alarm = Alarm(time: NSDate(), sound: "Apex", task: Task.GESTURE, isSet:false)
         }
         
         timer = NSTimer.scheduledTimerWithTimeInterval(1.0,

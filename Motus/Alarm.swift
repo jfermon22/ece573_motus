@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AudioToolbox
 
 class Alarm {
     var time:NSDate!
@@ -36,6 +37,7 @@ class Alarm {
         soundPlayer = SoundPlayer(sound: soundPath + sound )
         soundPlayer.setNumberOfLoops(-1)
         try! soundPlayer.play()
+        AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
     }
     
     func stopAlarm(){

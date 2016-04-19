@@ -10,6 +10,7 @@ import UIKit
 import CoreLocation
 import CoreMotion
 
+
 enum AlarmTriggeredStates {
     case TRIGGER_ALARM
     case WAITING_FOR_ALARM_KILL
@@ -22,7 +23,7 @@ enum AlarmTriggeredErrorType:ErrorType {
 
 let MOVE_DISTANCE_FEET = 20.0
 
-class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
+class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,GestureDetectorDelegate {
     
     //MARK:Member Variables
     @IBOutlet var instructionsLabel: UILabel!
@@ -47,6 +48,13 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
     //MARK: ViewController Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        if TEST_MODE {
+            locationTestDataLabel.text = ""
+            activityTestDataLabel.text = ""
+            //locationTestDataLabel.hidden = false
+            activityTestDataLabel.hidden = false
+        }
+        
         timeToCompleteTask = alarm.timeToCompleteTask
         state = .TRIGGER_ALARM        // Do any additional setup after loading the view.
         showActivityIndicator(false)
@@ -72,6 +80,11 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
         
         if motionDetector == nil {
             motionDetector = MotionDetector()
+        }
+        
+        if gestureDetector == nil {
+            gestureDetector = GestureDetector(uiview: self.view)
+            gestureDetector.delegate = self
         }
     }
     
@@ -179,9 +192,8 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
         print("waiting for task complete")
         switch alarm.task! {
         case .LOCATION:
-            taskIsComplete = locationDetector!.waitTilDeviceMove(MOVE_DISTANCE_FEET,timeout: timeToCompleteTask)
+            taskIsComplete = locationDetector!.waitTilDeviceMove(MOVE_DISTANCE_FEET, timeout: alarm.timeToCompleteTask )
             //locationDetector!.waitTilDeviceExitRegion(MOVE_DISTANCE_FEET/FEET_PER_METER, identifier: "Bedroom")
-            print ("taskiscomplete=\(taskIsComplete)")
             break
         case .MOTION:
             motionDetector!.start()
@@ -189,9 +201,12 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
             taskIsComplete = motionDetector!.deviceMoved
             break
         case .GESTURE:
+            taskIsComplete = gestureDetector.waitTilUserSatisfyRequests(alarm.timeToCompleteTask)
             break
             
         }
+        
+        print ("taskiscomplete=\(taskIsComplete)")
         return taskIsComplete
     }
     
@@ -286,6 +301,16 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
         print(currentActivity)
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {
             dispatch_async(dispatch_get_main_queue()) {
+                if (currentActivity.rangeOfString("Stationary") != nil) {
+                    currentActivity = "Get moving!\n"
+                    currentActivity.appendContentsOf("Location tracking doesn't start\n")
+                    currentActivity.appendContentsOf("until you start moving")
+                }
+                else {
+                    currentActivity = "Keep Moving! Only A few feet to go!\n"
+                    currentActivity.appendContentsOf("After moving, remain still\n")
+                    currentActivity.appendContentsOf("It takes a few seconds to read your location")
+                }
                 self.activityTestDataLabel.text = currentActivity
             }
         }
@@ -307,7 +332,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
             dispatch_async(dispatch_get_main_queue()) {
                 if shouldShow {
-                    self.instructionsLabel.text = "Location Services Calibrating..."
+                    self.instructionsLabel.text = "Remain Stationary. Location Services Calibrating..."
                     self.currentTaskLabel.hidden = true
                     self.activityIndicator.startAnimating()
                 } else {
@@ -316,6 +341,14 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
                     self.activityIndicator.stopAnimating()
                     self.gotLocationUpdate(CLLocation())
                 }
+            }
+        }
+    }
+    
+    func gotNewRequest(request: String) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
+            dispatch_async(dispatch_get_main_queue()) {
+                self.currentTaskLabel.text =  request
             }
         }
     }
@@ -329,6 +362,5 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate {
             }
         }
     }
-    
     
 }
