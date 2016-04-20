@@ -57,6 +57,7 @@ class GestureDetector :NSObject, UIGestureRecognizerDelegate {
     private var currentGesture:GestureType = GestureType.Pinch
     private var _view:UIView?
     private var isWaiting = false
+    private var lastPinchReceived = NSDate(timeIntervalSince1970: 1415637900)
     
     
     //MARK: Constructors
@@ -118,22 +119,23 @@ class GestureDetector :NSObject, UIGestureRecognizerDelegate {
     func handleTap(sender: UITapGestureRecognizer? = nil) {
         if(currentGesture == GestureType.Tap){
             print("RECEIVED TAP")
-            gesturesReceived += 1
+            receivedGesture()
         }
     }
     
     func handleSwipe(sender: UITapGestureRecognizer? = nil) {
         if(currentGesture == GestureType.Swipe){
             print("RECEIVED SWIPE")
-            gesturesReceived += 1
+            receivedGesture()
         }
     }
     func handlePinch(sender: UITapGestureRecognizer? = nil) {
-        if(currentGesture == GestureType.Pinch)
-        
+        if( currentGesture == GestureType.Pinch &&
+             abs(lastPinchReceived.timeIntervalSinceNow) > 0.5 )
         {
             print("RECEIVED PINCH")
-            gesturesReceived += 1
+            lastPinchReceived = NSDate()
+            receivedGesture()
         }
     }
     
@@ -197,6 +199,24 @@ class GestureDetector :NSObject, UIGestureRecognizerDelegate {
         }
         
         request?.appendContentsOf(" \(gesturesToSatisfySet) times")
+        delegate?.gotNewRequest(request!)
+    }
+    
+    func receivedGesture() {
+        gesturesReceived += 1
+        switch currentGesture {
+        case .Pinch:
+            request = "Pinch"
+            break
+        case .Tap:
+            request = "Tap"
+            break
+        case .Swipe:
+            request = "Swipe"
+            break
+        }
+        
+        request?.appendContentsOf(" \(gesturesToSatisfySet - gesturesReceived) more times")
         delegate?.gotNewRequest(request!)
     }
     

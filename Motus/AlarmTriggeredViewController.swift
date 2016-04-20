@@ -48,6 +48,8 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
     //MARK: ViewController Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //if test mode then make debug fields viewable
         if TEST_MODE {
             locationTestDataLabel.text = ""
             activityTestDataLabel.text = ""
@@ -55,36 +57,53 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
             activityTestDataLabel.hidden = false
         }
         
+        //set time left to complete task
         timeToCompleteTask = alarm.timeToCompleteTask
-        state = .TRIGGER_ALARM        // Do any additional setup after loading the view.
+        
+        // inits state to trigger alamr
+        state = .TRIGGER_ALARM
+        
+        // hide activity indicator
         showActivityIndicator(false)
-        if locationDetector == nil {
-            locationDetector = LocationDetector()
-            locationDetector.delegate = self
-            locationDetector.distanceFilter = kCLDistanceFilterNone
-            guard locationDetector!.start() else {
-                let waitSem = dispatch_semaphore_create(0)
-                dispatch_async(dispatch_get_main_queue()) {
-                    let alertController = UIAlertController(title: "Location Data Unavalable", message: "Enable Location permission in settings", preferredStyle: .Alert)
-                    let OKAction = UIAlertAction(title: "OK", style: .Default) {
-                        (action) in
-                        dispatch_semaphore_signal(waitSem)
+        
+        switch alarm.task! {
+        case .LOCATION:
+            //initialize location detector object
+            if locationDetector == nil {
+                locationDetector = LocationDetector()
+                locationDetector.delegate = self
+                locationDetector.distanceFilter = kCLDistanceFilterNone
+                guard locationDetector!.start() else {
+                    let waitSem = dispatch_semaphore_create(0)
+                    dispatch_async(dispatch_get_main_queue()) {
+                        let alertController = UIAlertController(title: "Location Data Unavalable", message: "Enable Location permission in settings", preferredStyle: .Alert)
+                        let OKAction = UIAlertAction(title: "OK", style: .Default) {
+                            (action) in
+                            dispatch_semaphore_signal(waitSem)
+                        }
+                        alertController.addAction(OKAction)
+                        self.presentViewController(alertController, animated: true, completion: nil)
                     }
-                    alertController.addAction(OKAction)
-                    self.presentViewController(alertController, animated: true, completion: nil)
+                    dispatch_semaphore_wait(waitSem, DISPATCH_TIME_FOREVER)
+                    return
                 }
-                dispatch_semaphore_wait(waitSem, DISPATCH_TIME_FOREVER)
-                return
             }
+            break
+            
+        case .GESTURE:
+            //initialize location detector object
+            if gestureDetector == nil {
+                gestureDetector = GestureDetector(uiview: self.view)
+                gestureDetector.delegate = self
+            }
+            break
+            
+        default:
+            break
         }
         
         if motionDetector == nil {
             motionDetector = MotionDetector()
-        }
-        
-        if gestureDetector == nil {
-            gestureDetector = GestureDetector(uiview: self.view)
-            gestureDetector.delegate = self
         }
     }
     
@@ -104,8 +123,14 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
     }
     
     override func viewWillDisappear(animated: Bool) {
-        motionDetector!.stop()
-        locationDetector!.stop()
+        if motionDetector != nil {
+            motionDetector!.stop()
+            motionDetector = nil
+        }
+        if locationDetector != nil {
+            locationDetector!.stop()
+            locationDetector = nil
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -223,7 +248,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
                     self.currentTaskLabel.text = "Complete Ten Arm Circles"
                     break;
                 case .GESTURE:
-                    self.currentTaskLabel.text = "Swipe up"
+                    self.currentTaskLabel.text = "Waiting..."
                     break;
                 }
             }
@@ -244,6 +269,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
     
     func gotLocationUpdate(location:CLLocation){
         var distancestr = ""
+        guard locationDetector != nil else { return }
         if locationDetector.initialLocation != nil {
             let distanceFeet = locationDetector.currentLocation!.distanceFromLocation(locationDetector.initialLocation!) * FEET_PER_METER
             let distance = MOVE_DISTANCE_FEET - distanceFeet
@@ -346,7 +372,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
     }
     
     func gotNewRequest(request: String) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {
             dispatch_async(dispatch_get_main_queue()) {
                 self.currentTaskLabel.text =  request
             }
