@@ -43,6 +43,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
     //MARK: FIXME
     @IBOutlet var locationTestDataLabel: UILabel!
     @IBOutlet var activityTestDataLabel: UILabel!
+    @IBOutlet var pedometerTestDataLabel: UILabel!
     
     
     //MARK: ViewController Methods
@@ -53,8 +54,10 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
         if TEST_MODE {
             locationTestDataLabel.text = ""
             activityTestDataLabel.text = ""
+            pedometerTestDataLabel.text = ""
             //locationTestDataLabel.hidden = false
             activityTestDataLabel.hidden = false
+            pedometerTestDataLabel.hidden = false
         }
         
         //set time left to complete task
@@ -288,6 +291,15 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
             }
         }
     }
+    
+    func gotPedometerUpdate(data:CMPedometerData) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {
+            dispatch_async(dispatch_get_main_queue()) {
+                self.pedometerTestDataLabel.text = "\(data)"
+            }
+        }
+    }
+
     
     func gotMotionActivityUpdate(activity: CMMotionActivity) {
         var currentActivity = ""

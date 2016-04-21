@@ -21,6 +21,7 @@
 		525307921C8959F30018C296 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525307911C8959F30018C296 /* Task.swift */; };
 		52964BAD1CAF912100555F7D /* MyUiAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52964BAC1CAF912100555F7D /* MyUiAlert.swift */; };
 		52B253B81CBF56160089E155 /* MotionActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B253B71CBF56160089E155 /* MotionActivityManager.swift */; };
+		52B253BA1CC8911D0089E155 /* PedometerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B253B91CC8911D0089E155 /* PedometerManager.swift */; };
 		52CFE4871C7A21860024E8C5 /* AlarmTriggeredViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CFE4861C7A21860024E8C5 /* AlarmTriggeredViewController.swift */; };
 		52F96D2B1C61B10B0073D354 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F96D2A1C61B10B0073D354 /* AppDelegate.swift */; };
 		52F96D2D1C61B10B0073D354 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F96D2C1C61B10B0073D354 /* MainViewController.swift */; };
@@ -56,6 +57,7 @@
 		525307911C8959F30018C296 /* Task.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		52964BAC1CAF912100555F7D /* MyUiAlert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyUiAlert.swift; sourceTree = "<group>"; };
 		52B253B71CBF56160089E155 /* MotionActivityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotionActivityManager.swift; sourceTree = "<group>"; };
+		52B253B91CC8911D0089E155 /* PedometerManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PedometerManager.swift; sourceTree = "<group>"; };
 		52CFE4861C7A21860024E8C5 /* AlarmTriggeredViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlarmTriggeredViewController.swift; sourceTree = "<group>"; };
 		52F96D271C61B10B0073D354 /* Motus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Motus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52F96D2A1C61B10B0073D354 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				525307511C83B3830018C296 /* GestureDetector.swift */,
 				525307491C83B1090018C296 /* TimeFunctions.swift */,
 				525307911C8959F30018C296 /* Task.swift */,
+				52B253B91CC8911D0089E155 /* PedometerManager.swift */,
 				52F96D341C61B10B0073D354 /* Assets.xcassets */,
 				52F96D361C61B10B0073D354 /* LaunchScreen.storyboard */,
 				52F96D391C61B10B0073D354 /* Info.plist */,
@@ -257,6 +260,7 @@
 				52964BAD1CAF912100555F7D /* MyUiAlert.swift in Sources */,
 				5253074A1C83B1090018C296 /* TimeFunctions.swift in Sources */,
 				525307501C83B3530018C296 /* LocationDetector.swift in Sources */,
+				52B253BA1CC8911D0089E155 /* PedometerManager.swift in Sources */,
 				52F96D2B1C61B10B0073D354 /* AppDelegate.swift in Sources */,
 				525307921C8959F30018C296 /* Task.swift in Sources */,
 				52CFE4871C7A21860024E8C5 /* AlarmTriggeredViewController.swift in Sources */,

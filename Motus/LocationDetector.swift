@@ -17,11 +17,12 @@ let INVALID_READING = -1.0
 protocol LocationDetectorDelegate {
     func gotLocationUpdate(location:CLLocation)
     func gotMotionActivityUpdate(activity:CMMotionActivity)
+    func gotPedometerUpdate(data:CMPedometerData)
     func IsCalibrating()
     func CalibrationComplete()
 }
 
-class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate {
+class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate, PedometerManagerDelegate {
     //MARK: public members
     var delegate:LocationDetectorDelegate?
     var minMoveDistance:CLLocationDistance {
@@ -42,6 +43,7 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate {
     //MARK: private members
     private var locationManager = LocationManager.sharedInstance
     private var motionActivityManager = MotionActivityManager.sharedInstance
+    //private var pedometerManager = PedometerManager.sharedInstance
     private var waitSem = dispatch_semaphore_create(0)
     private(set) var initialLocation:CLLocation? {
         set {
@@ -79,6 +81,7 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate {
         locationManager.distanceFilter = kCLDistanceFilterNone
         locationManager.delegate = self
         motionActivityManager.delegate = self
+        //pedometerManager.delegate = self
     }
     
     deinit {
@@ -89,12 +92,14 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate {
     //MARK: Update Methods
     func start() -> Bool {
         motionActivityManager.startUpdates()
+        //pedometerManager.startUpdates()
         return locationManager.startUpdatingLocation()
     }
     
     func stop() {
         locationManager.stopUpdatingLocation()
         motionActivityManager.stopUpdates()
+        //pedometerManager.stopUpdates()
         dispatch_semaphore_signal(waitSem)
     }
     
@@ -195,6 +200,12 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate {
             hasBecomeMobileSinceIntialLocationSet = true
         }
         delegate?.gotMotionActivityUpdate(motionActivity)
+    }
+    
+    //MARK: PedometerManagerDelegate Protocol Functions
+    func gotPedometerUpdate(data: CMPedometerData) {
+        print("Pedometer update: \(data)")
+        delegate?.gotPedometerUpdate(data)
     }
     
     //MARK: Wait methods

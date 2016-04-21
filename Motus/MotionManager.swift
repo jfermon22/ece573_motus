@@ -67,7 +67,6 @@ class MotionManager {
         return cmmotionmanager.accelerometerData!
     }
     
-    
     func stopUpdates() {
         if cmmotionmanager.accelerometerActive {
             cmmotionmanager.stopAccelerometerUpdates()
