@@ -10,7 +10,7 @@ import UIKit
 
 protocol GestureDetectorDelegate {
     //func gotGesture(gesture:UIGestureRecognizer)
-    func gotNewRequest(request:String)
+    func gotNewGestureRequest(request:String)
 }
 
 enum GestureType: UInt32 {
@@ -54,10 +54,17 @@ class GestureDetector :NSObject, UIGestureRecognizerDelegate {
     private var gesturesToSatisfySet:UInt32 = 0
     private var setsToSatisfyTask = 5
     private var setsComplete = 0
-    private var currentGesture:GestureType = GestureType.Pinch
+    private var currentGesture:GestureType {
+        set {
+            _currentGesture = newValue
+            updateRecognizers()
+        }
+        get { return _currentGesture }
+    }
     private var _view:UIView?
     private var isWaiting = false
     private var lastPinchReceived = NSDate(timeIntervalSince1970: 1415637900)
+    private var _currentGesture:GestureType = .Pinch
     
     
     //MARK: Constructors
@@ -71,6 +78,45 @@ class GestureDetector :NSObject, UIGestureRecognizerDelegate {
     }
     
     deinit {
+        removeRecognizers()
+        tapRecognizer = nil
+        swipeRecognizer = nil
+        pinchRecognizer = nil
+        view = nil
+        
+    }
+    
+    
+    //MARK: Gesture Handlers
+    private func updateRecognizers() {
+        removeRecognizers()
+        
+        switch currentGesture {
+        case .Pinch:
+            if pinchRecognizer == nil {
+                pinchRecognizer = UIPinchGestureRecognizer (target: self, action: #selector(GestureDetector.handleGesture(_:)))
+            }
+            pinchRecognizer?.delegate = self
+            view!.addGestureRecognizer(pinchRecognizer!)
+            break
+        case .Tap:
+            if tapRecognizer == nil {
+                tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(GestureDetector.handleGesture(_:)))
+            }
+            tapRecognizer?.delegate = self
+            view!.addGestureRecognizer(tapRecognizer!)
+            break
+        case .Swipe:
+            if swipeRecognizer == nil {
+                swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(GestureDetector.handleGesture(_:)))
+            }
+            swipeRecognizer?.delegate = self
+            view!.addGestureRecognizer(swipeRecognizer!)
+            break
+        }
+    }
+    
+    func removeRecognizers() {
         if view != nil {
             if let gestureRecognizerArray = view!.gestureRecognizers {
                 for gestureRecognizer in gestureRecognizerArray {
@@ -78,63 +124,21 @@ class GestureDetector :NSObject, UIGestureRecognizerDelegate {
                 }
             }
         }
-        tapRecognizer = nil
-        swipeRecognizer = nil
-        pinchRecognizer = nil
-        view = nil
-
     }
     
-    
-    //MARK: Gesture Handlers
-    private func updateRecognizers() {
-        if view != nil {
-            if let gestureRecognizerArray = view!.gestureRecognizers {
-                for gestureRecognizer in gestureRecognizerArray {
-                     view?.removeGestureRecognizer(gestureRecognizer)
-                }
+    func handleGesture(sender: UIGestureRecognizer? = nil) {
+        if let _ = sender as? UIPinchGestureRecognizer {
+            if abs(lastPinchReceived.timeIntervalSinceNow) > 0.5  {
+                print("RECEIVED PINCH")
+                lastPinchReceived = NSDate()
+                receivedGesture()
             }
-        }
-        
-        if tapRecognizer == nil {
-            tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(GestureDetector.handleTap(_:)))
-        }
-        if swipeRecognizer == nil {
-            swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(GestureDetector.handleSwipe(_:)))
-        }
-        if pinchRecognizer == nil {
-            pinchRecognizer = UIPinchGestureRecognizer (target: self, action: #selector(GestureDetector.handlePinch(_:)))
-        }
-        
-        tapRecognizer?.delegate = self
-        swipeRecognizer?.delegate = self
-        pinchRecognizer?.delegate = self
-        
-        // add tap as a gestureRecognizer to tapView
-        view!.addGestureRecognizer(tapRecognizer!)
-        view!.addGestureRecognizer(swipeRecognizer!)
-        view!.addGestureRecognizer(pinchRecognizer!)
-    }
-    
-    func handleTap(sender: UITapGestureRecognizer? = nil) {
-        if(currentGesture == GestureType.Tap){
-            print("RECEIVED TAP")
-            receivedGesture()
-        }
-    }
-    
-    func handleSwipe(sender: UITapGestureRecognizer? = nil) {
-        if(currentGesture == GestureType.Swipe){
+        } else if let _ = sender as? UISwipeGestureRecognizer {
             print("RECEIVED SWIPE")
             receivedGesture()
-        }
-    }
-    func handlePinch(sender: UITapGestureRecognizer? = nil) {
-        if( currentGesture == GestureType.Pinch &&
-             abs(lastPinchReceived.timeIntervalSinceNow) > 0.5 )
-        {
-            print("RECEIVED PINCH")
-            lastPinchReceived = NSDate()
+            
+        } else if let _ = sender as? UITapGestureRecognizer {
+            print("RECEIVED TAP")
             receivedGesture()
         }
     }
@@ -167,7 +171,13 @@ class GestureDetector :NSObject, UIGestureRecognizerDelegate {
         
         repeat {
             gesturesReceived = 0
-            currentGesture = GestureType.random()
+            
+            var newGesture:GestureType?
+            repeat {
+                newGesture = GestureType.random()
+            } while newGesture == currentGesture
+            
+            currentGesture = newGesture!
             gesturesToSatisfySet = arc4random_uniform(4) + 1
             sendRequest()
             repeat {
@@ -178,11 +188,11 @@ class GestureDetector :NSObject, UIGestureRecognizerDelegate {
                 setsComplete += 1
                 print("Set Complete")
             }
-        
+            
         } while ( setsComplete < setsToSatisfyTask && isWaiting )
         
         dispatch_semaphore_signal(waitSem)
-
+        
     }
     
     func sendRequest() {
@@ -199,7 +209,7 @@ class GestureDetector :NSObject, UIGestureRecognizerDelegate {
         }
         
         request?.appendContentsOf(" \(gesturesToSatisfySet) times")
-        delegate?.gotNewRequest(request!)
+        delegate?.gotNewGestureRequest(request!)
     }
     
     func receivedGesture() {
@@ -217,7 +227,7 @@ class GestureDetector :NSObject, UIGestureRecognizerDelegate {
         }
         
         request?.appendContentsOf(" \(gesturesToSatisfySet - gesturesReceived) more times")
-        delegate?.gotNewRequest(request!)
+        delegate?.gotNewGestureRequest(request!)
     }
     
     

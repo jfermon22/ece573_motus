@@ -383,7 +383,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
         }
     }
     
-    func gotNewRequest(request: String) {
+    func gotNewGestureRequest(request: String) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {
             dispatch_async(dispatch_get_main_queue()) {
                 self.currentTaskLabel.text =  request
