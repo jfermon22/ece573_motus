@@ -50,8 +50,8 @@ class AlarmSetViewController: UIViewController {
             soundButton.setTitle(alarm.sound, forState: .Normal)
         }
         
-        if alarm.soundPlayer.IsPlaying() {
-            alarm.soundPlayer.stop()
+        if alarm.IsPlaying {
+            alarm.stopAlarm()
         }
         
     }

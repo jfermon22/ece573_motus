@@ -48,14 +48,15 @@ class SoundChooserViewController: UITableViewController {
     
     func populateArray() {
         //print("populate array called")
-        let fileManager = NSFileManager.defaultManager()
+        /*let fileManager = NSFileManager.defaultManager()
         let tempArray = try! fileManager.contentsOfDirectoryAtPath(alarm.soundPath)
         sounds = [String]()
         for curSound in tempArray {
             sounds?.append(curSound.stringByReplacingOccurrencesOfString(".m4r", withString: ""))
         }
         sounds?.append("Random")
-        sounds = sounds!.sort()
+        sounds = sounds!.sort()*/
+        sounds = alarm.sounds
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -72,6 +73,8 @@ class SoundChooserViewController: UITableViewController {
         
         if (newSelectedCell?.textLabel?.text != "Random" ){
             alarm.testSound(alarm.sound + ".m4r")
+        } else {
+            alarm.stopAlarm()
         }
     }
 

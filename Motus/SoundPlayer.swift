@@ -15,17 +15,11 @@ enum SoundPlayerError: ErrorType {
 }
 
 class SoundPlayer {
-    var audioPlayer = AVAudioPlayer()
+    static let sharedInstance = SoundPlayer()
     var soundPath:NSURL?
+    private var audioPlayer = AVAudioPlayer()
  
-    init (){
-        
-    }
-    
-    convenience init (sound: String){
-        self.init()
-        setSound(sound)
-    }
+    private init (){}
     
     func setSound (sound: String){
         var thisSound = ""
@@ -35,9 +29,10 @@ class SoundPlayer {
             thisSound = sound
         }
         soundPath = NSURL(fileURLWithPath: thisSound)
-        //MARK:FIXME commented out for late night debugging
-        //try! AVAudioSession.sharedInstance().setCategory({AVAudioSessionCategoryPlayback}())
-        //try! AVAudioSession.sharedInstance().setActive(true)
+        
+        //override silent switch
+        try! AVAudioSession.sharedInstance().setCategory({AVAudioSessionCategoryPlayback}())
+        try! AVAudioSession.sharedInstance().setActive(true)
         try! audioPlayer = AVAudioPlayer(contentsOfURL: soundPath!)
         audioPlayer.numberOfLoops = -1
         audioPlayer.prepareToPlay()
@@ -53,6 +48,7 @@ class SoundPlayer {
     
     func play() throws {
         if audioPlayer.url != nil {
+            print("playing: \(audioPlayer.url)")
             audioPlayer.play()
         } else {
             throw SoundPlayerError.URL_NIL

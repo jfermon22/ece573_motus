@@ -103,7 +103,7 @@ class MotusTests: XCTestCase {
         let alarm = Alarm(time: NSDate(), sound: "Apex", task: .LOCATION, isSet: true)
         XCTAssertNotNil(alarm)
         alarm.triggerAlarm()
-        XCTAssertTrue(alarm.soundPlayer.IsPlaying())
+        XCTAssertTrue(alarm.IsPlaying)
         XCTAssertEqual(alarm.soundPlayer.getNumberOfLoops(), -1)
         alarm.stopAlarm()
     }

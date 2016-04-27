@@ -59,7 +59,7 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate, 
     private var hasBecomeMobileSinceIntialLocationSet = false
     private var _initialLocation:CLLocation?
     
-    //MARK: read-only memberts
+    //MARK: read-only members
     var currentLocation:CLLocation? {
         get { return locationManager.currentLocation }
     }

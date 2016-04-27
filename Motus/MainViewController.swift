@@ -63,8 +63,15 @@ class MainViewController: UIViewController {
         currentAlarmLabel.hidden = !alarm.isSet
         if alarm.isSet {
             alarmStatusLabel.text = "Alarm Set"
+            UIApplication.sharedApplication().idleTimerDisabled = true
+            UIDevice.currentDevice().batteryMonitoringEnabled = true
+            if UIDevice.currentDevice().batteryState == .Unplugged   {
+                NSLog("Device needs to be plugged in.")
+            }
         } else {
             alarmStatusLabel.text = "No Alarm Set"
+            UIApplication.sharedApplication().idleTimerDisabled = false
+            UIDevice.currentDevice().batteryMonitoringEnabled = false
         }
     }
 
