@@ -10,10 +10,10 @@ import UIKit
 
 let TEST_MODE =  false
 
-class MainViewController: UIViewController {
-
+class MainViewController: UIViewController, BatteryMonitorDelegate {
+    
     //MARK: members
-
+    
     @IBOutlet var currentTimeLabel: UILabel!
     @IBOutlet var alarmStatusLabel: UILabel!
     @IBOutlet var currentAlarmLabel: UILabel!
@@ -23,6 +23,7 @@ class MainViewController: UIViewController {
     var alarm:Alarm!
     var lastReadTime:String?
     var timer:NSTimer!
+    let batteryMonitor = BatteryMonitor()
     
     
     //warning this is just for test. Remove button for final
@@ -30,9 +31,9 @@ class MainViewController: UIViewController {
         alarm.time = NSDate()
         print("alarm TRIGGERED from test button \(alarm.time!)")
         performSegueWithIdentifier("AlarmTriggered", sender: self)
-    
+        
     }
-
+    
     //MARK: Methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,11 +46,13 @@ class MainViewController: UIViewController {
         }
         
         timer = NSTimer.scheduledTimerWithTimeInterval(1.0,
-            target: self,
-            selector: #selector(MainViewController.updateTime),
-            userInfo: nil,
-            repeats: true)
+                                                       target: self,
+                                                       selector: #selector(MainViewController.updateTime),
+                                                       userInfo: nil,
+                                                       repeats: true)
         updateTime(true)
+        
+        batteryMonitor.delegate = self
     }
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
@@ -64,17 +67,17 @@ class MainViewController: UIViewController {
         if alarm.isSet {
             alarmStatusLabel.text = "Alarm Set"
             UIApplication.sharedApplication().idleTimerDisabled = true
-            UIDevice.currentDevice().batteryMonitoringEnabled = true
-            if UIDevice.currentDevice().batteryState == .Unplugged   {
-                NSLog("Device needs to be plugged in.")
+            batteryMonitor.enable()
+            if alarm.isSet {
+                presentUnpluggedWarning()
             }
         } else {
             alarmStatusLabel.text = "No Alarm Set"
             UIApplication.sharedApplication().idleTimerDisabled = false
-            UIDevice.currentDevice().batteryMonitoringEnabled = false
+            //batteryMonitor.disable()
         }
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -83,7 +86,7 @@ class MainViewController: UIViewController {
     func updateTime(skipTriggerCheck:Bool = false){
         //set clock to current time
         currentTimeLabel.text = TimeFunctions.formatTimeForDisplay(NSDate())
-      
+        
         if alarmShouldTrigger() && !skipTriggerCheck {
             alarm.isSet = false
             print("alarm TRIGGERED at \(alarm.time!)")
@@ -95,12 +98,40 @@ class MainViewController: UIViewController {
     
     func alarmShouldTrigger() -> Bool {
         if let _ = lastReadTime {
-        return ( alarm.isSet &&
-            currentTimeLabel.text == currentAlarmLabel!.text &&
-            currentTimeLabel.text != lastReadTime )
+            return ( alarm.isSet &&
+                currentTimeLabel.text == currentAlarmLabel!.text &&
+                currentTimeLabel.text != lastReadTime )
         } else {
-           return false
+            return false
         }
+    }
+    
+    func batteryStateChanged(state: UIDeviceBatteryState) {
+        switch batteryMonitor.state {
+        case .Charging:
+            guard let _ = self.presentedViewController as? UIAlertController else { return }
+            self.dismissViewControllerAnimated(false, completion: nil)
+            break
+        case .Unplugged:
+            guard alarm.isSet else { return }
+            presentUnpluggedWarning()
+            break
+        default:
+            break
+        }
+    }
+    
+    func presentUnpluggedWarning() {
+        guard  batteryMonitor.state == .Unplugged  else { return }
+        let alertController = UIAlertController(title: "Warning", message: "Device needs to be plugged in when alarm is set", preferredStyle: .Alert)
+        
+        let OKAction = UIAlertAction(title: "OK", style: .Default) {
+            (action) in
+        }
+        
+        alertController.addAction(OKAction)
+        
+        self.presentViewController(alertController, animated: true, completion: nil)
     }
     
     //MARK: Segue Methods
@@ -136,6 +167,6 @@ class MainViewController: UIViewController {
         }
         
     }
-
+    
 }
 
