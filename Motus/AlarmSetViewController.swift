@@ -12,16 +12,17 @@ class AlarmSetViewController: UIViewController {
     
     @IBOutlet var timePicker: UIDatePicker!
     @IBOutlet var soundButton: UIButton!
-    var alarm:Alarm!
     @IBOutlet var alarmConfirmButton: UIButton!
-    var lastSegue:UIStoryboardSegue?
+    @IBOutlet var taskButton: UIButton!
     
+    var alarm:Alarm!
+    var lastSegue:UIStoryboardSegue?
     var lastCalledSegue:String?
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
         soundButton.setTitle(alarm.sound, forState: .Normal)
+        taskButton.setTitle(Task.GetText(alarm.task), forState: .Normal)
         // Do any additional setup after loading the view.
     }
 
@@ -40,6 +41,14 @@ class AlarmSetViewController: UIViewController {
                 }
             }
         }
+        else if segue.identifier == "SelectTaskSegue"
+        {
+            if let navController = segue.destinationViewController as? UINavigationController {
+                if let taskVC = navController.viewControllers[0] as? TaskChooserViewController{
+                    taskVC.alarm = alarm
+                }
+            }
+        }
     }
     
     @IBAction func prepareForUnwind(segue:UIStoryboardSegue) {
@@ -48,6 +57,10 @@ class AlarmSetViewController: UIViewController {
         if let soundVC = segue.sourceViewController as? SoundChooserViewController {
             alarm = soundVC.alarm
             soundButton.setTitle(alarm.sound, forState: .Normal)
+        }
+        else if let taskVC = segue.sourceViewController as? TaskChooserViewController {
+            alarm = taskVC.alarm
+            taskButton.setTitle(Task.GetText(alarm.task), forState: .Normal)
         }
         
         if alarm.IsPlaying {

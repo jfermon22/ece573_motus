@@ -223,15 +223,14 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
             taskIsComplete = locationDetector!.waitTilDeviceMove(MOVE_DISTANCE_FEET, timeout: alarm.timeToCompleteTask )
             //locationDetector!.waitTilDeviceExitRegion(MOVE_DISTANCE_FEET/FEET_PER_METER, identifier: "Bedroom")
             break
-        case .MOTION:
+        /*case .MOTION:
             motionDetector!.start()
             motionDetector!.waitTilDeviceMove()
             taskIsComplete = motionDetector!.deviceMoved
-            break
+            break*/
         case .GESTURE:
             taskIsComplete = gestureDetector.waitTilUserSatisfyRequests(alarm.timeToCompleteTask)
             break
-            
         }
         
         print ("taskiscomplete=\(taskIsComplete)")
@@ -247,9 +246,9 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
                 case .LOCATION:
                     self.currentTaskLabel.text = String(format: "Move %.00f ft.",  MOVE_DISTANCE_FEET )
                     break;
-                case .MOTION:
+                /*case .MOTION:
                     self.currentTaskLabel.text = "Complete Ten Arm Circles"
-                    break;
+                    break;*/
                 case .GESTURE:
                     self.currentTaskLabel.text = "Waiting..."
                     break;
