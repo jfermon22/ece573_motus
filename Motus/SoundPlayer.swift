@@ -15,12 +15,17 @@ enum SoundPlayerError: ErrorType {
 }
 
 class SoundPlayer {
+    //MARK: Public members
     static let sharedInstance = SoundPlayer()
     var soundPath:NSURL?
+    
+    //MARK: Private members
     private var audioPlayer = AVAudioPlayer()
  
+    //MARK:Constructor
     private init (){}
     
+    //Helper function to set the sound and prepare it to be played
     func setSound (sound: String){
         var thisSound = ""
         if !sound.hasSuffix(".m4r"){
@@ -47,23 +52,20 @@ class SoundPlayer {
     }
     
     func play() throws {
-        if audioPlayer.url != nil {
-            print("playing: \(audioPlayer.url)")
-            audioPlayer.play()
-        } else {
-            throw SoundPlayerError.URL_NIL
-        }
+        //if url is not set to path then throw
+        guard audioPlayer.url != nil else { throw SoundPlayerError.URL_NIL }
+
+        audioPlayer.play()
     }
     
     func stop() {
-        if audioPlayer.playing {
-            audioPlayer.stop()
-        }
+        //if we aren't playing just return
+        guard audioPlayer.playing else { return }
+            
+        audioPlayer.stop()
     }
     
     func IsPlaying() -> Bool {
         return audioPlayer.playing
     }
-
-    
 }

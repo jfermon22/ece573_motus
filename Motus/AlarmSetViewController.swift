@@ -9,16 +9,19 @@
 import UIKit
 
 class AlarmSetViewController: UIViewController {
-    
+    //MARK: Public members
     @IBOutlet var timePicker: UIDatePicker!
     @IBOutlet var soundButton: UIButton!
     @IBOutlet var alarmConfirmButton: UIButton!
     @IBOutlet var taskButton: UIButton!
-    
     var alarm:Alarm!
-    var lastSegue:UIStoryboardSegue?
-    var lastCalledSegue:String?
     
+    //MARK: Private members
+    // These two members are used during unit tests
+    private var lastSegue:UIStoryboardSegue?
+    private var lastCalledSegue:String?
+    
+    //MARK: View Controller methods
     override func viewDidLoad() {
         super.viewDidLoad()
         soundButton.setTitle(alarm.sound, forState: .Normal)
@@ -31,12 +34,15 @@ class AlarmSetViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    //MARK: Segue methods
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        //set the following members for unit testing
         lastSegue = segue
+        
         if segue.identifier == "SelectSoundSegue"
         {
             if let navController = segue.destinationViewController as? UINavigationController {
-                if let soundVC = navController.viewControllers[0] as? SoundChooserViewController{
+                if let soundVC = navController.viewControllers[0] as? SoundChooserViewController {
                     soundVC.alarm = alarm
                 }
             }
@@ -44,7 +50,7 @@ class AlarmSetViewController: UIViewController {
         else if segue.identifier == "SelectTaskSegue"
         {
             if let navController = segue.destinationViewController as? UINavigationController {
-                if let taskVC = navController.viewControllers[0] as? TaskChooserViewController{
+                if let taskVC = navController.viewControllers[0] as? TaskChooserViewController {
                     taskVC.alarm = alarm
                 }
             }
@@ -52,8 +58,10 @@ class AlarmSetViewController: UIViewController {
     }
     
     @IBAction func prepareForUnwind(segue:UIStoryboardSegue) {
+        //set the following member for unit testing
         lastSegue=segue
         lastCalledSegue = segue.identifier
+        
         if let soundVC = segue.sourceViewController as? SoundChooserViewController {
             alarm = soundVC.alarm
             soundButton.setTitle(alarm.sound, forState: .Normal)
@@ -68,17 +76,5 @@ class AlarmSetViewController: UIViewController {
         }
         
     }
-
-
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

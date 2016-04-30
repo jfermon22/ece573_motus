@@ -9,29 +9,37 @@
 import UIKit
 
 class TaskChooserViewController: UITableViewController {
-
+    //MARK: Public members
     var alarm:Alarm!
     var tasksNames:[String]?
     var tasksDict:[String:Task] = [Task.GetText(.LOCATION):.LOCATION, Task.GetText(.GESTURE):.GESTURE]
-
-
-    var currentlySelected:NSIndexPath?
+    private(set) var currentlySelected:NSIndexPath?
     
-    
+    //MARK: View Controller methods
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        populateArray()
+        
+        tasksNames = [String]()
+        for (taskName, _) in tasksDict {
+            tasksNames?.append(taskName)
+        }
     }
     
+    //MARK: TableViewController Methods
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        //print("cell for row at index called: \(indexPath.row) section: \(indexPath.section)")
+        //Get the current cell being created
         let cell = tableView.dequeueReusableCellWithIdentifier("basic", forIndexPath: indexPath)
+        
+        //set cell text to name of sound
         let name = tasksNames![indexPath.row];
         cell.textLabel!.text = name;
+        
+        //if the current alarm task is the cell we are creating,
+        //then set cell to checked. If not set it to unchecked
         if alarm.task == tasksDict[name] {
             cell.accessoryType = UITableViewCellAccessoryType.Checkmark
             currentlySelected = indexPath;
@@ -40,34 +48,33 @@ class TaskChooserViewController: UITableViewController {
         {
             cell.accessoryType = UITableViewCellAccessoryType.None;
         }
+        
         return cell
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        //print("num of rows called: \(sounds!.count) in sectrion: \(section)")
         return tasksDict.count;
     }
     
-    func populateArray() {
-        //tasks = alarm.sounds
-        tasksNames = [String]()
-        for (taskName, enumVal) in tasksDict {
-            tasksNames?.append(taskName)
-        }
-
-    }
-    
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
         if let _ = currentlySelected {
+            // uncheck the previously selected cell
             let previouslySelectedCell = tableView.cellForRowAtIndexPath(currentlySelected!)
             previouslySelectedCell?.accessoryType = UITableViewCellAccessoryType.None
         }
         
+        //get the newly seleted cell
         let newSelectedCell = tableView.cellForRowAtIndexPath(indexPath)
+        
+        //set cell to Checked
         newSelectedCell?.accessoryType = UITableViewCellAccessoryType.Checkmark
+        
+        //set alarm sound to cell text
         alarm.task = tasksDict[(newSelectedCell?.textLabel?.text)!]
         
+        //set currently selected
         currentlySelected = indexPath
     }
 

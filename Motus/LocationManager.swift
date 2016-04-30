@@ -24,13 +24,6 @@ protocol LocationManagerDelegate {
     func didExitRegion (region: CLRegion)
 }
 
-//enum LocationManagerState {
-//    case Idle
-//    case Calibrating
-//    case Active
-//}
-
-
 class LocationManager: NSObject, CLLocationManagerDelegate {
     //MARK: public variables
     static let sharedInstance = LocationManager()
@@ -69,6 +62,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         delegate = nil
     }
     
+    //Helper function to handle permission requests
     func requestPermission() -> Bool {
         var authStatus = CLLocationManager.authorizationStatus()
         
@@ -83,6 +77,8 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     }
 
     //MARK: Update Methods
+    
+    //Start location updates
     func startUpdatingLocation() -> Bool {
         
         guard requestPermission() else { return false }
@@ -93,10 +89,12 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         return true
     }
     
+    //Stop location updates
     func stopUpdatingLocation() {
         cllocationManager.stopUpdatingLocation()
     }
     
+    //Start monitoring a region
     func startMonitoringForRegion(region: CLRegion) -> Bool {
         
         guard requestPermission() else { return false }
@@ -106,14 +104,13 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         return true
     }
     
+    //Stop monitoring a region
     func stopMonitoringForRegion(region: CLRegion) {
         cllocationManager.stopMonitoringForRegion(region)
     }
     
     //MARK: CLLocationManagerDelegate Protocol Functions
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]){
-        //let location: AnyObject? = (locations as NSArray).lastObject
-        //currentLocation = location as? CLLocation
         
         delegate!.gotLocationUpdate(currentLocation!)
     }

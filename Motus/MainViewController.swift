@@ -13,7 +13,6 @@ let TEST_MODE =  false
 class MainViewController: UIViewController, BatteryMonitorDelegate {
     
     //MARK: members
-    
     @IBOutlet var currentTimeLabel: UILabel!
     @IBOutlet var alarmStatusLabel: UILabel!
     @IBOutlet var currentAlarmLabel: UILabel!
@@ -25,7 +24,7 @@ class MainViewController: UIViewController, BatteryMonitorDelegate {
     var timer:NSTimer!
     let batteryMonitor = BatteryMonitor()
     
-    
+    //FIXME: Test Methods
     //warning this is just for test. Remove button for final
     @IBAction func testAlarmButtonPressed(sender: UIButton) {
         alarm.time = NSDate()
@@ -34,7 +33,7 @@ class MainViewController: UIViewController, BatteryMonitorDelegate {
         
     }
     
-    //MARK: Methods
+    //MARK: View Controller Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         if TEST_MODE {
@@ -54,6 +53,7 @@ class MainViewController: UIViewController, BatteryMonitorDelegate {
         
         batteryMonitor.delegate = self
     }
+    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         lastReadTime = nil
@@ -83,6 +83,9 @@ class MainViewController: UIViewController, BatteryMonitorDelegate {
         // Dispose of any resources that can be recreated.
     }
     
+    //Function triggers once a second that updates clock time and
+    // if the alarm should be triggered, calls segues to go to
+    // "alarm triggered" screen
     func updateTime(skipTriggerCheck:Bool = false){
         //set clock to current time
         currentTimeLabel.text = TimeFunctions.formatTimeForDisplay(NSDate())
@@ -96,6 +99,7 @@ class MainViewController: UIViewController, BatteryMonitorDelegate {
         lastReadTime = currentTimeLabel.text
     }
     
+    //function to check if the current time matches the alarm set time
     func alarmShouldTrigger() -> Bool {
         if let _ = lastReadTime {
             return ( alarm.isSet &&
@@ -106,14 +110,17 @@ class MainViewController: UIViewController, BatteryMonitorDelegate {
         }
     }
     
+    //BatteryMonitor delegate method called when battery state changed
     func batteryStateChanged(state: UIDeviceBatteryState) {
         switch batteryMonitor.state {
         case .Charging:
+            //check if we are presenting a UIAertController. If so, dismiss it
             guard let _ = self.presentedViewController as? UIAlertController else { return }
             self.dismissViewControllerAnimated(false, completion: nil)
             break
         case .Unplugged:
             guard alarm.isSet else { return }
+            //check if alarm set, if it is then present the UiAlert
             presentUnpluggedWarning()
             break
         default:
@@ -121,9 +128,15 @@ class MainViewController: UIViewController, BatteryMonitorDelegate {
         }
     }
     
+    // Helper function to present UI alert when alarm is set and device is unplugged
     func presentUnpluggedWarning() {
+        //verify device is unplugged
         guard  batteryMonitor.state == .Unplugged  else { return }
-        let alertController = UIAlertController(title: "Warning", message: "Device needs to be plugged in when alarm is set", preferredStyle: .Alert)
+        
+        //configure the alert controller
+        let alertController = UIAlertController(title: "Warning",
+                                                message: "Device needs to be plugged in when alarm is set",
+                                                preferredStyle: .Alert)
         
         let OKAction = UIAlertAction(title: "OK", style: .Default) {
             (action) in
@@ -131,13 +144,16 @@ class MainViewController: UIViewController, BatteryMonitorDelegate {
         
         alertController.addAction(OKAction)
         
+        //Present controller
         self.presentViewController(alertController, animated: true, completion: nil)
     }
     
     //MARK: Segue Methods
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        //set the following members for unit testing
         lastCalledSegue = segue.identifier
         lastSegue = segue
+        
         if segue.identifier == "CreateNewAlarmSegue"
         {
             if let asvc = segue.destinationViewController as? AlarmSetViewController{
@@ -148,13 +164,14 @@ class MainViewController: UIViewController, BatteryMonitorDelegate {
         {
             if let atvc = segue.destinationViewController as? AlarmTriggeredViewController {
                 atvc.alarm = alarm
-                //atvc.countDownActive = false
             }
         }
     }
     
     @IBAction func prepareForUnwind(segue:UIStoryboardSegue) {
+        //set the following members for unit testing
         lastCalledSegue = segue.identifier
+        
         if let vc = segue.sourceViewController as? AlarmSetViewController {
             alarm = vc.alarm
             alarm.time = vc.timePicker.date

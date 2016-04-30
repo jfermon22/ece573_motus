@@ -9,7 +9,7 @@
 import Foundation
 
 class TimeFunctions {
-    
+    // helper function to format and NSDate into a string
     static func formatTimeForDisplay(date:NSDate) -> String {
         let formatter = NSDateFormatter()
         formatter.locale = NSLocale.currentLocale()

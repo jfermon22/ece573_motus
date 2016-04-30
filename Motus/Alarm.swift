@@ -12,6 +12,7 @@ import AudioToolbox
 let RANDOM_TUNE = "Random"
 
 class Alarm {
+    //MARK: Public Members
     var time:NSDate!
     var sound:String!
     var sounds = [String]()
@@ -23,8 +24,10 @@ class Alarm {
         get{return soundPlayer.IsPlaying()}
     }
     
+    //MARK: Private Members
     private var soundPlayer = SoundPlayer.sharedInstance
     
+    //MARK: Constructor
     init (time:NSDate, sound:String, task:Task, isSet:Bool){
         self.time = time
         self.sound = sound
@@ -35,6 +38,7 @@ class Alarm {
         soundPlayer.setSound(soundPath + sound)
         self.timeToCompleteTask = 60
     }
+    
     
     func testSound(sound: String) {
         soundPlayer.setSound(soundPath + sound)

@@ -40,7 +40,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
     private var gestureDetector:GestureDetector!
     private var timer:NSTimer!
     
-    //MARK: FIXME
+    //FIXME: Test Labels
     @IBOutlet var locationTestDataLabel: UILabel!
     @IBOutlet var activityTestDataLabel: UILabel!
     @IBOutlet var pedometerTestDataLabel: UILabel!
@@ -69,6 +69,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
         // hide activity indicator
         showActivityIndicator(false)
         
+        //initi our detector objects based on the task assigned to the device
         switch alarm.task! {
         case .LOCATION:
             //initialize location detector object
@@ -77,6 +78,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
                 locationDetector.delegate = self
                 locationDetector.distanceFilter = kCLDistanceFilterNone
                 guard locationDetector!.start() else {
+                    //if detector fails to start then present UIAlert to request permission
                     let waitSem = dispatch_semaphore_create(0)
                     dispatch_async(dispatch_get_main_queue()) {
                         let alertController = UIAlertController(title: "Location Data Unavalable", message: "Enable Location permission in settings", preferredStyle: .Alert)
@@ -100,7 +102,6 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
                 gestureDetector.delegate = self
             }
             break
-            
         default:
             break
         }
@@ -119,13 +120,14 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
                                                        selector: #selector(AlarmTriggeredViewController.updateTime),
                                                        userInfo: nil,
                                                        repeats: true)
-        let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
-        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+        //launch the state machine in a new thread
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             self.runStateMachine()
         }
     }
     
     override func viewWillDisappear(animated: Bool) {
+        //cleanup the detector classes if they are initialized
         if motionDetector != nil {
             motionDetector!.stop()
             motionDetector = nil
@@ -143,38 +145,46 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
     
     //MARK:State Methods
     func runStateMachine(){
+        
         while state != AlarmTriggeredStates.TASK_COMPLETE {
-            print("runStateMachine: state: \(state)")
+            //print("runStateMachine: state: \(state)")
             switch state! {
             case .TRIGGER_ALARM:
+                //trigger the alarm then move to next state
                 triggerAlarm()
                 state = .WAITING_FOR_ALARM_KILL
                 break;
             case .WAITING_FOR_ALARM_KILL:
+                //wait infinitely for the alarm to be killed.
+                //Once function returns, move to next state
                 waitForAlarmKilled()
                 state = .WAITING_FOR_TASK_COMPLETE
                 break;
             case .WAITING_FOR_TASK_COMPLETE:
-                if waitForTaskComplete() {
-                    state = .TASK_COMPLETE
-                } else  {
-                    state = .TRIGGER_ALARM
-                }
+                //call waitForTaskComplete. 
+                //if it returns true, the task was completed in time 
+                //successfully and we return to main menu
+                //If it returns false. we retrigger the alarm
+                state = waitForTaskComplete() ? .TASK_COMPLETE : .TRIGGER_ALARM
                 break;
             case .TASK_COMPLETE:
+                //included for completeness
                 print("exiting")
                 break;
             }
             usleep(100000)
         }
+        
         performSegueWithIdentifier("UnwindAlarmTriggeredToMain", sender: self)
     }
     
+    //helper function to trigger the alarm
     func triggerAlarm(){
         alarm.triggerAlarm()
         resetView()
     }
     
+    //helper function that waits until motion is detected to turn off alarm
     func waitForAlarmKilled() {
         do {
             try waitForMotion()
@@ -182,6 +192,8 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
             alarm.stopAlarm()
             
         } catch _ {
+            // if waitForMotion throws it is because we dont have permission to access motion data
+            // Present popup to user to alert them of situation
             let waitSem = dispatch_semaphore_create(0)
             dispatch_async(dispatch_get_main_queue()) {
                 let alertController = UIAlertController(title: "Error", message: "Motion Data Unavalable.\nClick to silence alarm", preferredStyle: .Alert)
@@ -197,31 +209,38 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
                 
                 self.presentViewController(alertController, animated: true, completion: nil)
             }
+            //Code will wait until pop up is killed
             dispatch_semaphore_wait(waitSem, DISPATCH_TIME_FOREVER)
         }
     }
     
-    
+    // helper function to handle waiting for the device to move
     func waitForMotion() throws {
         
+        //if we fail to start updates, throw exception
         guard motionDetector!.start()
             else { throw AlarmTriggeredErrorType.ACCEL_UNAVAIL }
         
         motionDetector!.waitTilDeviceMove()
         
+        // Once device moves, stop updates
         motionDetector!.stop()
-        
     }
     
+    
+    
     func waitForTaskComplete() -> Bool {
+        
         var taskIsComplete = false
+        
+        //call function to update label that tells user what to 
+        // do to permanently silence alarm
         setTaskLabel()
         
-        print("waiting for task complete")
+        //print("waiting for task complete")
         switch alarm.task! {
         case .LOCATION:
             taskIsComplete = locationDetector!.waitTilDeviceMove(MOVE_DISTANCE_FEET, timeout: alarm.timeToCompleteTask )
-            //locationDetector!.waitTilDeviceExitRegion(MOVE_DISTANCE_FEET/FEET_PER_METER, identifier: "Bedroom")
             break
         /*case .MOTION:
             motionDetector!.start()
@@ -233,10 +252,11 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
             break
         }
         
-        print ("taskiscomplete=\(taskIsComplete)")
+        //print ("taskiscomplete=\(taskIsComplete)")
         return taskIsComplete
     }
     
+    //Helper function to update instruction label for task
     func setTaskLabel(){
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {
             dispatch_async(dispatch_get_main_queue()) {
@@ -257,6 +277,19 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
         }
     }
     
+    //Helper function to reset labels on screen
+    func resetView(){
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
+            dispatch_async(dispatch_get_main_queue()) {
+                self.timeToCompleteTask = self.alarm.timeToCompleteTask
+                self.instructionsLabel.text = "Move to Momentarily Silence Alarm"
+                self.currentTaskLabel.hidden = true
+            }
+        }
+    }
+    
+    //function called once per second that updates current time, 
+    //and timeToConmpleteTask Labels
     func updateTime(){
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {
             dispatch_async(dispatch_get_main_queue()) {
@@ -269,6 +302,8 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
         }
     }
     
+    //MARK: LocationDetectorDelegate Methods
+    //Receives location updates
     func gotLocationUpdate(location:CLLocation){
         var distancestr = ""
         guard locationDetector != nil else { return }
@@ -291,6 +326,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
         }
     }
     
+    //Receives Pedomater updates
     func gotPedometerUpdate(data:CMPedometerData) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {
             dispatch_async(dispatch_get_main_queue()) {
@@ -299,7 +335,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
         }
     }
 
-    
+    //Receives MotionActivity updates
     func gotMotionActivityUpdate(activity: CMMotionActivity) {
         var currentActivity = ""
         var conf:String!
@@ -353,18 +389,24 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
         }
     }
     
+    //Receives updates from locationDetector when it is zeroing in
+    //on the users location but the precision isn't good enough yet
+    //Shows activity indicator
     func IsCalibrating() {
         pauseCountdown = true
         let shouldShow = true
         showActivityIndicator(shouldShow)
     }
     
+    //Receives updates from locationDetector when updates are preceise enough
+    //Hides activity indicator
     func CalibrationComplete() {
         pauseCountdown = false
         let shouldShow = false
         showActivityIndicator(shouldShow)
     }
     
+    //Helper function for showingg activity indicator
     func showActivityIndicator(shouldShow:Bool){
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
             dispatch_async(dispatch_get_main_queue()) {
@@ -382,6 +424,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
         }
     }
     
+    //MARK: GestureDetectorDelegate Methods
     func gotNewGestureRequest(request: String) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {
             dispatch_async(dispatch_get_main_queue()) {
@@ -390,14 +433,6 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
         }
     }
     
-    func resetView(){
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
-            dispatch_async(dispatch_get_main_queue()) {
-                self.timeToCompleteTask = self.alarm.timeToCompleteTask
-                self.instructionsLabel.text = "Move to Momentarily Silence Alarm"
-                self.currentTaskLabel.hidden = true
-            }
-        }
-    }
+    
     
 }

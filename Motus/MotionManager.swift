@@ -10,7 +10,7 @@ import Foundation
 import CoreMotion
 
 protocol MotionManagerDelegate {
-    func gotAccelUpdate(orientation:CMAccelerometerData)
+    func gotAccelerometerUpdate(orientation:CMAccelerometerData)
 }
 
 class MotionManager {
@@ -48,7 +48,7 @@ class MotionManager {
             let handler:CMAccelerometerHandler = {
                 (data: CMAccelerometerData?, error: NSError?) -> Void in
                 self.currentOrientation = data!
-                self.delegate!.gotAccelUpdate(self.currentOrientation!)
+                self.delegate!.gotAccelerometerUpdate(self.currentOrientation!)
             }
             print("startMotionUpdates - Started motion updates")
             cmmotionmanager.accelerometerUpdateInterval = NSTimeInterval(1)

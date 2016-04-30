@@ -47,11 +47,12 @@ class MotionDetector : MotionManagerDelegate {
         dispatch_semaphore_signal(waitSem)
     }
     
-    func gotAccelUpdate(orientation: CMAccelerometerData) {
+    //MARK: MotionManagerDelegate Methods
+    func gotAccelerometerUpdate(orientation: CMAccelerometerData) {
         if initialOrientation == nil {
             initialOrientation = orientation
         }
-        
+        //set the current orientation and check if device moved
         currentOrientation = orientation
         
         deviceMoved = deviceInMotion()
@@ -76,11 +77,7 @@ class MotionDetector : MotionManagerDelegate {
         dispatch_semaphore_wait(waitSem, time )
     }
     
-    
-    func didDeviceMove() -> Bool {
-        return deviceMoved
-    }
-    
+    //Helper function to tell if vice is in motion
     private func deviceInMotion()-> Bool
     {
         let accel1 = initialOrientation!.acceleration

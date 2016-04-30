@@ -85,17 +85,20 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate, 
     }
     
     deinit {
+        //stop location updates
         stop()
         initialLocation = nil
     }
     
     //MARK: Update Methods
+    //start all updates
     func start() -> Bool {
         motionActivityManager.startUpdates()
         //pedometerManager.startUpdates()
         return locationManager.startUpdatingLocation()
     }
     
+    //stop all updates
     func stop() {
         locationManager.stopUpdatingLocation()
         motionActivityManager.stopUpdates()
@@ -103,11 +106,13 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate, 
         dispatch_semaphore_signal(waitSem)
     }
     
+    //Start monitoring for a region
     func startMonitoringForRegion(region: CLRegion) -> Bool {
         print("LocationDetector::startMonitoringRegion - start monitoring for region")
         return locationManager.startMonitoringForRegion(region)
     }
     
+    //Stop monitoring for a region
     func stopForMonitoringRegion(region: CLRegion) {
         locationManager.stopMonitoringForRegion(region)
     }
@@ -117,7 +122,11 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate, 
         
         //if no one is waiting to see if we moved then just return
         guard isWaiting else { return }
-
+        
+        //check to see if the location update is valid
+        // - check if accuracy is valid
+        // - check if accuracy is precise enough
+        // - check if reading is within the last second
         let isLocationDataValid = latestReadingAccuracy <= LOCATION_PRECISION &&
             latestReadingAccuracy != INVALID_READING &&
             currentLocation?.timestamp.timeIntervalSinceNow < 1
@@ -154,10 +163,10 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate, 
             initialLocation = currentLocation
             bestAccuracy = (latestReadingAccuracy < bestAccuracy) ? latestReadingAccuracy : bestAccuracy
         } else if( didDeviceMoveMinimum() ) {
-            print ("SEMPOSTED")
+            //if device moved required distance, post the semaphore 
+            // to release the wait
             dispatch_semaphore_signal(waitSem)
         }
-        
     }
     
     func failedToUpdateLocation (error: NSError)
@@ -191,7 +200,7 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate, 
             //print("Received blank motion activity")
             return
         }
-        
+
         if !hasBecomeMobileSinceIntialLocationSet &&
             !motionActivity.stationary {
             //&& (motionActivity.confidence == .Medium || motionActivity.confidence == .High ) {
@@ -243,13 +252,18 @@ class LocationDetector: LocationManagerDelegate, MotionActivityManagerDelegate, 
     }
     
     private func didDeviceMoveMinimum() -> Bool {
+        
+        //Check if user is moving, if they haven't moved accoring to the
+        //  pedometer, then we dont check to see if they have moved the 
+        //  required distance
+        
         if hasBecomeMobileSinceIntialLocationSet {
             delegate!.gotLocationUpdate(currentLocation!)
             let distance = currentLocation!.distanceFromLocation(initialLocation!)
-            print("distance: \(distance) +- \(latestReadingAccuracy!)   minMoveDistance: \(minMoveDistance))")
+            //print("distance: \(distance) +- \(latestReadingAccuracy!)   minMoveDistance: \(minMoveDistance))")
             return distance > minMoveDistance
         } else {
-            print("didDeviceMoveMinimum::has not begun moving since initialLocationSet")
+            //print("didDeviceMoveMinimum::has not begun moving since initialLocationSet")
             return false
         }
     }
