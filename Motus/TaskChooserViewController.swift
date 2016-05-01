@@ -11,8 +11,8 @@ import UIKit
 class TaskChooserViewController: UITableViewController {
     //MARK: Public members
     var alarm:Alarm!
-    var tasksNames:[String]?
-    var tasksDict:[String:Task] = [Task.GetText(.LOCATION):.LOCATION, Task.GetText(.GESTURE):.GESTURE]
+    var tasksNames = [String]()
+    var tasksDict:[String:Task] = [Task.GetText(.LOCATION):.LOCATION, Task.GetText(.GESTURE):.GESTURE,Task.GetText(.RANDOM):.RANDOM]
     private(set) var currentlySelected:NSIndexPath?
     
     //MARK: View Controller methods
@@ -23,10 +23,12 @@ class TaskChooserViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tasksNames = [String]()
         for (taskName, _) in tasksDict {
-            tasksNames?.append(taskName)
+            tasksNames.append(taskName)
         }
+        
+        //add "Random" to list of choices
+        //tasksNames.append(RANDOM_TUNE)
     }
     
     //MARK: TableViewController Methods
@@ -35,7 +37,7 @@ class TaskChooserViewController: UITableViewController {
         let cell = tableView.dequeueReusableCellWithIdentifier("basic", forIndexPath: indexPath)
         
         //set cell text to name of sound
-        let name = tasksNames![indexPath.row];
+        let name = tasksNames[indexPath.row];
         cell.textLabel!.text = name;
         
         //if the current alarm task is the cell we are creating,
@@ -54,7 +56,7 @@ class TaskChooserViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        return tasksDict.count;
+        return tasksNames.count;
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -72,7 +74,7 @@ class TaskChooserViewController: UITableViewController {
         newSelectedCell?.accessoryType = UITableViewCellAccessoryType.Checkmark
         
         //set alarm sound to cell text
-        alarm.task = tasksDict[(newSelectedCell?.textLabel?.text)!]
+        alarm.task = tasksDict[(newSelectedCell?.textLabel?.text)!]!
         
         //set currently selected
         currentlySelected = indexPath

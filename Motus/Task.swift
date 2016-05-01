@@ -8,10 +8,15 @@
 
 import Foundation
 
+enum TaskErrors:ErrorType {
+    case RandomWhenUnexpected
+}
+
 enum Task: UInt32 {
     case LOCATION
     //case MOTION
     case GESTURE
+    case RANDOM
     
     private static let _count: Task.RawValue = {
         // find the maximum enum value
@@ -30,10 +35,10 @@ enum Task: UInt32 {
         switch task {
         case .LOCATION:
             return "Move 20 ft."
-            break
         case .GESTURE:
             return "Screen Gestures"
-            break
+        case .RANDOM:
+            return "Random"
         }
     }
 

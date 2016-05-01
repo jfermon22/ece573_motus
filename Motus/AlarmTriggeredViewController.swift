@@ -39,6 +39,7 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
     private var locationDetector:LocationDetector!
     private var gestureDetector:GestureDetector!
     private var timer:NSTimer!
+    private var alarmIsRandom = false
     
     //FIXME: Test Labels
     @IBOutlet var locationTestDataLabel: UILabel!
@@ -69,8 +70,16 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
         // hide activity indicator
         showActivityIndicator(false)
         
-        //initi our detector objects based on the task assigned to the device
-        switch alarm.task! {
+        //if alarm is random then change it to a real  task
+        alarmIsRandom = ( alarm.task == .RANDOM )
+        if alarmIsRandom {
+            repeat {
+            alarm.task = Task.random()
+            } while alarm.task == .RANDOM
+        }
+        
+        //init our detector objects based on the task assigned to the device
+        switch alarm.task {
         case .LOCATION:
             //initialize location detector object
             if locationDetector == nil {
@@ -165,10 +174,13 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
                 //if it returns true, the task was completed in time 
                 //successfully and we return to main menu
                 //If it returns false. we retrigger the alarm
-                state = waitForTaskComplete() ? .TASK_COMPLETE : .TRIGGER_ALARM
+                state = try! waitForTaskComplete() ? .TASK_COMPLETE : .TRIGGER_ALARM
                 break;
             case .TASK_COMPLETE:
                 //included for completeness
+                if alarmIsRandom {
+                    alarm.task = .RANDOM
+                }
                 print("exiting")
                 break;
             }
@@ -229,16 +241,16 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
     
     
     
-    func waitForTaskComplete() -> Bool {
+    func waitForTaskComplete() throws -> Bool {
         
         var taskIsComplete = false
         
         //call function to update label that tells user what to 
         // do to permanently silence alarm
-        setTaskLabel()
+        try! setTaskLabel()
         
         //print("waiting for task complete")
-        switch alarm.task! {
+        switch alarm.task {
         case .LOCATION:
             taskIsComplete = locationDetector!.waitTilDeviceMove(MOVE_DISTANCE_FEET, timeout: alarm.timeToCompleteTask )
             break
@@ -250,6 +262,9 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
         case .GESTURE:
             taskIsComplete = gestureDetector.waitTilUserSatisfyRequests(alarm.timeToCompleteTask)
             break
+        case .RANDOM:
+             print ("waitForTaskComplete::This should never execute!!!!")
+            break
         }
         
         //print ("taskiscomplete=\(taskIsComplete)")
@@ -257,12 +272,12 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
     }
     
     //Helper function to update instruction label for task
-    func setTaskLabel(){
+    func setTaskLabel() throws{
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {
             dispatch_async(dispatch_get_main_queue()) {
                 self.instructionsLabel.text = "To Permanently Silence Alarm"
                 self.currentTaskLabel.hidden = false
-                switch self.alarm.task! {
+                switch self.alarm.task {
                 case .LOCATION:
                     self.currentTaskLabel.text = String(format: "Move %.00f ft.",  MOVE_DISTANCE_FEET )
                     break;
@@ -272,6 +287,9 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
                 case .GESTURE:
                     self.currentTaskLabel.text = "Waiting..."
                     break;
+                case .RANDOM:
+                    print ("setTaskLabel::This should never execute!!!!")
+                    break
                 }
             }
         }

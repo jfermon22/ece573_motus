@@ -17,7 +17,7 @@ class Alarm {
     var sound:String!
     var sounds = [String]()
     var soundPath:String!
-    var task:Task!
+    var task = Task.LOCATION
     var isSet:Bool
     var timeToCompleteTask:UInt64!
     var IsPlaying:Bool{
