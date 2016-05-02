@@ -21,11 +21,10 @@ class MotionActivityManager: NSObject {
         get { return CMMotionActivityManager.isActivityAvailable() }
     }
     
-    
     //MARK: private variables
     private let cmMotionActivityManager = CMMotionActivityManager()
     private(set) var currentActivity:CMMotionActivity?
-
+    
     //MARK: Constructors
     override init() {
         super.init()
@@ -40,24 +39,26 @@ class MotionActivityManager: NSObject {
     
     //MARK: Update Functions
     func startUpdates() -> Bool {
-        var success = false
-        if isActivityAvailable {
-            let handler:CMMotionActivityHandler = {
-                (data: CMMotionActivity?) -> Void in
-                self.currentActivity = data!
-                self.delegate!.gotMotionActivityUpdate(self.currentActivity!)
-            }
-            print("startUpdates - Started motion activity updates")
-            cmMotionActivityManager.startActivityUpdatesToQueue(NSOperationQueue(), withHandler: handler)
-            success = true
-        } else {
+        //define handler for motion activity updates
+        guard isActivityAvailable else {
             print("startUpdates - activity updates unavailable")
+            return false
         }
-        return success
+        
+        let handler:CMMotionActivityHandler = {
+            (data: CMMotionActivity?) -> Void in
+            self.currentActivity = data!
+            self.delegate!.gotMotionActivityUpdate(self.currentActivity!)
+        }
+        
+        print("startUpdates - Started motion activity updates")
+        cmMotionActivityManager.startActivityUpdatesToQueue(NSOperationQueue(), withHandler: handler)
+        
+        return true
     }
     
     func stopUpdates() {
         cmMotionActivityManager.stopActivityUpdates()
     }
-
+    
 }

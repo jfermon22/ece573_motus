@@ -25,12 +25,14 @@ enum Task: UInt32 {
         return maxValue
     }()
     
+    //method to return a random task
     static func random() -> Task {
         // pick and return a new value
         let rand = arc4random_uniform(_count)
         return Task(rawValue: rand)!
     }
     
+    //Returns a sctirng for the specified task
     static func GetText(task:Task) -> String {
         switch task {
         case .LOCATION:

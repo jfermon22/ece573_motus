@@ -85,7 +85,10 @@ class MotionDetector : MotionManagerDelegate {
         let diffx = abs(accel1.x - accel2.x)
         let diffy = abs(accel1.y - accel2.y)
         let diffz = abs(accel1.y - accel2.y)
+        
+        //find magnitude of difference vector
         let motionMagnitude = sqrt( pow(diffx,2) + pow(diffy,2) + pow(diffz,2) )
+        
         //print("motionMagnitude: \(motionMagnitude)")
         return motionMagnitude > DEVICE_MOTIONLESS_THRESHOLD
     }

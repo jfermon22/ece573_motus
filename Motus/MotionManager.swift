@@ -44,9 +44,11 @@ class MotionManager {
     
     //MARK: Update Functions
     func startUpdates() -> Bool {
+        //define the handler for accelerometer updates
         if cmmotionmanager.accelerometerAvailable  {
             let handler:CMAccelerometerHandler = {
                 (data: CMAccelerometerData?, error: NSError?) -> Void in
+                //set currentorientation and send to delegate
                 self.currentOrientation = data!
                 self.delegate!.gotAccelerometerUpdate(self.currentOrientation!)
             }
@@ -56,12 +58,15 @@ class MotionManager {
         } else {
             print("startMotionUpdates - Accelorometer unavailable")
         }
+        
+        //sleep to allow accelerometer time to init before we check it
         usleep(100)
         return cmmotionmanager.accelerometerActive
     }
 
     func getUpdate() -> CMAccelerometerData {
-        if (cmmotionmanager.accelerometerData == nil) {
+        guard cmmotionmanager.accelerometerData == nil else {
+            //if we haven't gotten an update yet, just send canned data
             return CMAccelerometerData()
         }
         return cmmotionmanager.accelerometerData!

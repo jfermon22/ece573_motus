@@ -39,6 +39,8 @@ class SoundPlayer {
         try! AVAudioSession.sharedInstance().setCategory({AVAudioSessionCategoryPlayback}())
         try! AVAudioSession.sharedInstance().setActive(true)
         try! audioPlayer = AVAudioPlayer(contentsOfURL: soundPath!)
+        
+        //set number of loops to infinite
         audioPlayer.numberOfLoops = -1
         audioPlayer.prepareToPlay()
     }

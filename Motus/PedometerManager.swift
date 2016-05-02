@@ -14,7 +14,7 @@ protocol PedometerManagerDelegate {
 }
 
 class PedometerManager {
-
+    
     //MARK: public variables
     static let sharedInstance = PedometerManager()
     var delegate:PedometerManagerDelegate?
@@ -47,7 +47,7 @@ class PedometerManager {
     
     //MARK: Constructors
     init() {
-
+        
     }
     
     deinit {
@@ -58,26 +58,27 @@ class PedometerManager {
     
     //MARK: Update Functions
     func startUpdates() -> Bool {
-        var isStarted = true
-        if isAvailable  {
-            let handler:
-                CMPedometerHandler = {
-                    (data:
-                    CMPedometerData?, error: NSError?) -> Void in
+        
+        guard isAvailable else {
+            print("startUpdates - pedometer updates unavailable")
+            return false
+        }
+        //create handler to handle cmpedometer updates
+        let handler:
+            CMPedometerHandler = {
+                (data:
+                CMPedometerData?, error: NSError?) -> Void in
                 self.latestPedometerData = data!
                 self.delegate!.gotPedometerUpdate(self.latestPedometerData!)
-            }
-            print("startUpdates - Started pedometer updates")
-            cmPedometer.startPedometerUpdatesFromDate(NSDate(), withHandler: handler)
-        } else {
-            print("startUpdates - pedometer updates unavailable")
-            isStarted = false
         }
-        return isStarted
+        print("startUpdates - Started pedometer updates")
+        cmPedometer.startPedometerUpdatesFromDate(NSDate(), withHandler: handler)
+        
+        return true
     }
     
     func stopUpdates() {
-            cmPedometer.stopPedometerUpdates()
+        cmPedometer.stopPedometerUpdates()
     }
     
 }
