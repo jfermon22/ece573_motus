@@ -19,7 +19,7 @@ class MainViewController: UIViewController, BatteryMonitorDelegate {
     @IBOutlet var newAlarmButton: UIButton!
     var lastCalledSegue:String?
     var lastSegue:UIStoryboardSegue?
-    var alarm:Alarm!
+    var alarm = Alarm(time: NSDate(), sound: "Apex", task: Task.GESTURE, isSet:false)
     var lastReadTime:String?
     var timer:NSTimer!
     let batteryMonitor = BatteryMonitor()
@@ -38,10 +38,6 @@ class MainViewController: UIViewController, BatteryMonitorDelegate {
         super.viewDidLoad()
         if TEST_MODE {
             
-        }
-        
-        if alarm == nil {
-            alarm = Alarm(time: NSDate(), sound: "Apex", task: Task.GESTURE, isSet:false)
         }
         
         timer = NSTimer.scheduledTimerWithTimeInterval(1.0,
@@ -66,6 +62,7 @@ class MainViewController: UIViewController, BatteryMonitorDelegate {
         currentAlarmLabel.hidden = !alarm.isSet
         if alarm.isSet {
             alarmStatusLabel.text = "Alarm Set"
+            currentAlarmLabel.text = TimeFunctions.formatTimeForDisplay(alarm.time! )
             UIApplication.sharedApplication().idleTimerDisabled = true
             batteryMonitor.enable()
             if alarm.isSet {
@@ -102,6 +99,8 @@ class MainViewController: UIViewController, BatteryMonitorDelegate {
     //function to check if the current time matches the alarm set time
     func alarmShouldTrigger() -> Bool {
         if let _ = lastReadTime {
+            
+            //print ("alarm.isSet:\(alarm.isSet) currentTimeLabel.text: \(currentTimeLabel.text) currentAlarmLabel!.text:\(currentAlarmLabel!.text)  lastReadTime:\(lastReadTime)")
             return ( alarm.isSet &&
                 currentTimeLabel.text == currentAlarmLabel!.text &&
                 currentTimeLabel.text != lastReadTime )
@@ -175,7 +174,6 @@ class MainViewController: UIViewController, BatteryMonitorDelegate {
         if let vc = segue.sourceViewController as? AlarmSetViewController {
             alarm = vc.alarm
             alarm.time = vc.timePicker.date
-            currentAlarmLabel.text = TimeFunctions.formatTimeForDisplay( alarm.time! );
             alarm.isSet = true;
         }
         else if let vc = segue.sourceViewController as? AlarmTriggeredViewController {

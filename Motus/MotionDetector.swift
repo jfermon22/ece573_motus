@@ -17,7 +17,7 @@ class MotionDetector : MotionManagerDelegate {
 
     //MARK: private members
     private var motionManager = MotionManager.sharedInstance
-    private var waitSem = dispatch_semaphore_create(0)
+    private(set) var waitSem = dispatch_semaphore_create(0)
     private(set) var currentOrientation:CMAccelerometerData?
     private(set) var initialOrientation:CMAccelerometerData?
     private(set) var deviceMoved =  false

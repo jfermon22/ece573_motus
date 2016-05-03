@@ -34,8 +34,8 @@ class AlarmTriggeredViewController: UIViewController, LocationDetectorDelegate,G
     var alarm:Alarm!
     private(set) var pauseCountdown = false
     private(set) var state:AlarmTriggeredStates!
-    private var timeToCompleteTask:UInt64!
-    private var motionDetector:MotionDetector!
+    private(set) var timeToCompleteTask:UInt64!
+    private(set) var motionDetector:MotionDetector!
     private var locationDetector:LocationDetector!
     private var gestureDetector:GestureDetector!
     private var timer:NSTimer!

@@ -18,7 +18,7 @@ class AlarmSetViewController: UIViewController {
     
     //MARK: Private members
     // These two members are used during unit tests
-    private var lastSegue:UIStoryboardSegue?
+    private(set) var lastSegue:UIStoryboardSegue?
     private var lastCalledSegue:String?
     
     //MARK: View Controller methods

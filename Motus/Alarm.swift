@@ -25,7 +25,7 @@ class Alarm {
     }
     
     //MARK: Private Members
-    private var soundPlayer = SoundPlayer.sharedInstance
+    private(set) var soundPlayer = SoundPlayer.sharedInstance
     
     //MARK: Constructor
     init (time:NSDate, sound:String, task:Task, isSet:Bool){

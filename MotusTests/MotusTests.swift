@@ -7,12 +7,15 @@
 //
 
 import XCTest
+import CoreMotion
 @testable import Motus
 
 class MotusTests: XCTestCase {
     var mvc:MainViewController!
     var asvc:AlarmSetViewController!
+    var atvc:AlarmTriggeredViewController!
     var scvc:SoundChooserViewController!
+    var tcvc:TaskChooserViewController!
     var navvc:UINavigationController!
     
     
@@ -24,7 +27,12 @@ class MotusTests: XCTestCase {
         mvc = storyboard.instantiateInitialViewController() as! MainViewController
         UIApplication.sharedApplication().keyWindow!.rootViewController = mvc
         let _ = mvc.view
-                mvc.viewDidLoad()
+        mvc.viewDidLoad()
+        
+        mvc.performSegueWithIdentifier("AlarmTriggered", sender: mvc)
+        atvc = mvc.lastSegue?.destinationViewController as! AlarmTriggeredViewController
+        let _ = atvc.view
+        atvc.viewDidLoad()
         
         mvc.newAlarmButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
         asvc = mvc.lastSegue?.destinationViewController as! AlarmSetViewController
@@ -39,6 +47,15 @@ class MotusTests: XCTestCase {
         scvc = navvc.viewControllers[0] as! SoundChooserViewController
         let _ = scvc.view
         scvc.viewDidLoad()
+        
+        asvc.taskButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+        navvc = asvc.lastSegue?.destinationViewController as! UINavigationController
+        let _ = navvc.view
+        navvc.viewDidLoad()
+        
+        tcvc = navvc.viewControllers[0] as! TaskChooserViewController
+        let _ = tcvc.view
+        tcvc.viewDidLoad()
 
     }
     
@@ -48,7 +65,6 @@ class MotusTests: XCTestCase {
     }
     
     func testCurrentTimeShown(){
-
         XCTAssertEqual(mvc.currentTimeLabel.text, TimeFunctions.formatTimeForDisplay(NSDate()))
     }
     
@@ -98,8 +114,6 @@ class MotusTests: XCTestCase {
     }*/
     
     func testSoundPlayContinuousWhenTrggered() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
         let alarm = Alarm(time: NSDate(), sound: "Apex", task: .LOCATION, isSet: true)
         XCTAssertNotNil(alarm)
         alarm.triggerAlarm()
@@ -119,6 +133,39 @@ class MotusTests: XCTestCase {
         XCTAssertEqual(cell.textLabel?.text, scvc.alarm.sound)
         
     }
+    
+    func testUserCanSelectTask(){
+        asvc.taskButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+        usleep(10000)
+        let index = NSIndexPath(forItem: 2, inSection: 0)
+        tcvc.tableView.selectRowAtIndexPath(index , animated: false, scrollPosition: UITableViewScrollPosition.Middle)
+        tcvc.tableView(tcvc.tableView, didSelectRowAtIndexPath: index);
+        let cell = tcvc.tableView(tcvc.tableView, cellForRowAtIndexPath:index)
+        XCTAssertEqual(cell.textLabel?.text, Task.GetText( tcvc.alarm.task))
+    }
+    
+    func testAlarmTriggerWhenCurrentTimeEqualAlarmTime() {
+        let date = NSDate()
+        mvc.alarm = Alarm(time: date, sound: "Apex", task: .LOCATION, isSet: true)
+        usleep(100)
+        mvc.viewWillAppear(true)
+        usleep(100)
+        //ubtract 1 minute from time and make new time
+        let unitFlags: NSCalendarUnit = [.Hour,.Minute,.Second, .Day, .Month, .Year]
+        let components = NSCalendar.currentCalendar().components(unitFlags, fromDate: date)
+        components.minute = components.minute - 1
+        let calendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)
+        let oneMinuteEarlierDate = calendar!.dateFromComponents(components)
+        mvc.lastReadTime = TimeFunctions.formatTimeForDisplay(oneMinuteEarlierDate!)
+        XCTAssert(mvc.alarmShouldTrigger())
+    }
+    
+    func testUSerHasOneMinuteToCompleteTask() {
+        atvc.viewDidLoad()
+        atvc.viewDidAppear(true)
+        XCTAssertEqual(atvc.timeToCompleteTask, 60)
+    }
+    
     
    // func testPerformanceExample() {
    //     // This is an example of a performance test case.
