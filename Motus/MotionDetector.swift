@@ -9,7 +9,7 @@
 import Foundation
 import CoreMotion
 
-let DEVICE_MOTIONLESS_THRESHOLD = 0.01
+let DEVICE_MOTIONLESS_THRESHOLD = 0.03
 
 class MotionDetector : MotionManagerDelegate {
     //MARK: public members

@@ -54,7 +54,7 @@
                                     </button>
                                 </subviews>
                             </stackView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8YS-xa-Zl4">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8YS-xa-Zl4">
                                 <rect key="frame" x="20" y="36" width="260" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="32"/>
                                 <state key="normal" title="Test:Trigger Alarm">
@@ -361,10 +361,10 @@
             </objects>
             <point key="canvasLocation" x="2117" y="490"/>
         </scene>
-        <!--Choose Sound-->
+        <!--Choose Task-->
         <scene sceneID="LHg-z9-J5A">
             <objects>
-                <tableViewController id="t7u-C1-f54" customClass="TaskChooserViewController" customModule="Motus" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Choose Task" id="t7u-C1-f54" customClass="TaskChooserViewController" customModule="Motus" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="0HO-8W-z1O">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -396,7 +396,7 @@
                     <toolbarItems>
                         <barButtonItem title="Item" id="MJc-TK-SCJ"/>
                     </toolbarItems>
-                    <navigationItem key="navigationItem" title="Choose Sound" id="NIL-Ap-fzd" userLabel="Choose Task">
+                    <navigationItem key="navigationItem" title="Choose Task" id="NIL-Ap-fzd" userLabel="Choose Task">
                         <barButtonItem key="backBarButtonItem" title="Back" id="L8a-af-J3N"/>
                         <barButtonItem key="leftBarButtonItem" title="Back" id="tjA-2F-ETO">
                             <connections>
@@ -410,10 +410,10 @@
             </objects>
             <point key="canvasLocation" x="2780" y="1265"/>
         </scene>
-        <!--Choose Sound-->
+        <!--Choose Task-->
         <scene sceneID="YG3-qE-V5L">
             <objects>
-                <navigationController title="Choose Sound" automaticallyAdjustsScrollViewInsets="NO" id="RJE-wa-svJ" sceneMemberID="viewController">
+                <navigationController title="Choose Task" automaticallyAdjustsScrollViewInsets="NO" id="RJE-wa-svJ" sceneMemberID="viewController">
                     <toolbarItems/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="bd5-um-Cbd">
